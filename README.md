@@ -14,15 +14,15 @@ Todos os commits devem possuir uma descrição.
 Toda versão que esteja funcionando deverá possuir uma tag, e esta deverá ser descrita aqui em baixo, com as funcionalidades que já possui.
 
 Formatação básica do código:
-> if(condition){
-    printf("use só um tab, pls.");
-  }
-  else {
-    um_tab_novamente;
-  }
-  E assim por diante. Sucesso para nós.
-
-
+```c
+if(condition){
+  printf("use só um tab, pls.");
+}
+else {
+  um_tab_novamente;
+}
+E assim por diante. Sucesso para nós.
+```
 
 Tags
 v0.0 --> aguardando commit inicial.
