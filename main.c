@@ -21,24 +21,29 @@
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 
+#define BLOCK_WIDTH 80
+#define BLOCK_HEIGHT 30
+//Matriz do Mapa possui 10 linhas e 10 colunas
+
 typedef struct _BLOCK{
-	int posX, posY;
 	int imgW, imgH;
 	SDL_Surface* image;
 } BLOCK;
-//imgW e imgH só serão necessárias caso as imagens pudessem ter tamanhos distintos
 
 //Variáveis Globais
 
 SDL_Window* gWindow = NULL;
 SDL_Surface* gScreenSurface = NULL;
 
-//Bibliotecas
+BLOCK Brick1;
+
+
+//Bibliotecas extras
 #include "func.h"
 
 //Protótipos em desenvolvimento
 
-
+void imprimeMapa(int mapa[10][10]);
 
 int main(int argc, char* args[]){
 	int quit = false;

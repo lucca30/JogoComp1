@@ -29,7 +29,7 @@ int init()
         else{
 						//Habilita o carregamento de imagens JPG
 						//Colocar "IMG_INIT_PNG" caso queira trabalhar com imagens PNG
-            int imgFlags = IMG_INIT_JPG;
+            int imgFlags = IMG_INIT_JPG|IMG_INIT_PNG;
             if(!(IMG_Init(imgFlags) & imgFlags))
             {
                 printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
@@ -74,3 +74,13 @@ SDL_Surface* loadSurface(char *address){
     }
     return optimizedSurface;
 }
+int Mapa1[10][10]= {{0,0,1,0,0,1,0,0,1,0},
+                    {0,0,1,0,0,1,0,0,1,0},
+                    {0,0,1,0,0,1,0,0,1,0},
+                    {0,0,1,0,0,1,0,0,1,0},
+                    {0,0,1,0,0,1,0,0,1,0},
+                    {0,0,1,0,0,1,0,0,1,0},
+                    {0,0,1,0,0,1,0,0,1,0},
+                    {0,0,1,0,0,1,0,0,1,0},
+                    {0,0,1,0,0,1,0,0,1,0},
+                    {0,0,1,0,0,1,0,0,1,0}};
