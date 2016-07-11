@@ -24,7 +24,7 @@ int main(int argc, char* args[]){
   		printf("Failed to initialize!\n");
   	}
 	else {
-		if(!createBlock(&gBlock1, BLOCK_ADDRESS1)){
+		if(!createBlock(&gBlock1, BLOCK_ADDRESS1) || !createBall(&gBall, BALL_ADRESS)){
 			quit=false;
 		}
 		while(!quit){
@@ -44,11 +44,17 @@ int main(int argc, char* args[]){
 				}
 			}
 			SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0x00, 0x88, 0xFF));
+			colisao(&gBall);
+			if(!moveBall(&gBall)){
+				quit = false;
+				puts("Problemas ao imprimir a bola.");
+			}
 			if(!imprimeMapa(Mapa1)){
 				quit = false;
-				puts("Problemas ao imprimir um bloco");
+				puts("Problemas ao imprimir um bloco.");
 			}
 			SDL_UpdateWindowSurface(gWindow);
+			SDL_Delay(1000/FPS);
 		}
 	}
 

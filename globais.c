@@ -5,6 +5,8 @@ SDL_Surface* gScreenSurface = NULL;
 
 BLOCK gBlock1;
 
+BALL gBall;
+
 int Mapa1[10][10]= {{1,0,0,1,0,1,0,1,1,1},
                     {1,0,0,1,0,1,0,1,0,0},
                     {1,1,0,1,1,1,0,1,1,1},

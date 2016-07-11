@@ -10,6 +10,8 @@ extern SDL_Surface* gScreenSurface;
 
 extern BLOCK gBlock1;
 
+extern BALL gBall;
+
 extern int Mapa1[10][10];
 
 

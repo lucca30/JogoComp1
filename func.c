@@ -6,7 +6,6 @@
 #include "globais.h"
 #include "func.h"
 
-//Funções em desenvolvimento
 int imprimeMapa(int mapa[10][10]){
 	int i, j;
 	int success = true;
@@ -42,8 +41,50 @@ int createBlock(BLOCK *b, char *address){
 	return success;
 }
 
+int createBall(BALL *b, char *address){
+	int success = true;
+	b->image = loadSurface(address);
+	if(b->image==NULL){
+		success = false;
+		puts("Imagem da bola não foi carregada.");
+	}
+	SDL_SetColorKey(b->image, SDL_TRUE, SDL_MapRGB( (b->image)->format, 0, 0, 0));
+	b->posx = 400;
+	b->posy = 400;
+	b->stepx = -10;
+	b->stepy = -5;
+	return success;
+}
 
-//Funções Implementadas
+int moveBall(BALL *b){
+	int success = true;
+	SDL_Rect srcRct, destRct;
+	srcRct.x = 0;
+	srcRct.y = 0;
+	srcRct.w = BALL_WIDTH;
+	srcRct.h = BALL_HEIGHT;
+
+	b->posx += b->stepx;
+	b->posy += b->stepy;
+	destRct.x = b->posx - BALL_WIDTH/2;
+	destRct.y = b->posy - BALL_HEIGHT/2;
+	if(SDL_BlitSurface(b->image, &srcRct, gScreenSurface, &destRct) < 0){
+		printf("SDL could not blit! SDL Error: %s\n", SDL_GetError());
+		success = false;
+	}
+
+	return success;
+}
+
+void colisao(BALL *b){
+	if(b->posx >= SCREEN_WIDTH - BALL_WIDTH/2 || b->posx <= BALL_WIDTH/2){
+		b->stepx = -(b->stepx);
+	}
+	if(b->posy >= SCREEN_HEIGHT - BALL_HEIGHT/2 || b->posy <= BALL_HEIGHT/2){
+		b->stepy = -(b->stepy);
+	}
+}
+
 int init()
 {
     int success = true;
@@ -80,6 +121,12 @@ void closing(){
 		//Libera o espaço dos elementos globais
     SDL_FreeSurface(gScreenSurface);
     gScreenSurface = NULL;
+
+		SDL_FreeSurface(gBlock1.image);
+		gBlock1.image = NULL;
+
+		SDL_FreeSurface(gBall.image);
+		gBall.image = NULL;
 
     SDL_DestroyWindow(gWindow);
     gWindow = NULL;
