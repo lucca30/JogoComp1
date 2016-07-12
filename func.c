@@ -85,8 +85,7 @@ void colisao(BALL *b){
 	}
 }
 
-int init()
-{
+int init(){
     int success = true;
 
     if( SDL_Init(SDL_INIT_VIDEO) < 0){
@@ -154,3 +153,48 @@ SDL_Surface* loadSurface(char *address){
     }
     return optimizedSurface;
 }
+
+int createPad(PAD *p, char *address){
+	int success = true;
+	p->image = loadSurface(address);
+	if(p->image==NULL){
+		success = false;
+		puts("Imagem do pad não foi carregada.");
+	}
+	SDL_SetColorKey(p->image, SDL_TRUE, SDL_MapRGB( (p->image)->format, 0, 0, 0));
+	p->posx = 400;
+	p->posy = 500;
+	p->vetor.x = 0;
+	p->vetor.y = 0;
+	return success;
+}
+
+int movePad(PAD *p){
+	int success = true;
+	SDL_Rect srcRct, destRct;
+	srcRct.x = 0;
+	srcRct.y = 0;
+	srcRct.w = PAD_WIDTH;
+	srcRct.h = PAD_HEIGHT;
+
+	p->posx += p->vetor.x;
+	p->posy += p->vetor.y;
+	destRct.x = p->posx;
+	destRct.y = p->posy;
+	if(SDL_BlitSurface(p->image, &srcRct, gScreenSurface, &destRct) < 0){
+		printf("SDL could not blit! SDL Error: %s\n", SDL_GetError());
+		success = false;
+	}
+
+	return success;
+}
+
+void aceleratePad(PAD *p){
+	const Uint8 *state = SDL_GetKeyboardState(NULL);
+	if (state[SDL_SCANCODE_RIGHT] > 0 && p->vetor.x <= Vmax){
+		p->vetor.x = p->vetor.x + 2;
+		}
+	if (state[SDL_SCANCODE_LEFT] > 0 && p->vetor.x >= -Vmax){
+		p->vetor.x = p->vetor.x - 2;
+		}
+	}

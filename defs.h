@@ -16,6 +16,11 @@
 #define BALL_HEIGHT 24
 #define BALL_ADRESS "./img/ball.png"
 
+#define PAD_WIDTH 200
+#define PAD_HEIGHT 80
+#define PAD_ADDRESS "./img/pad.jpg"
+#define Vmax 10
+
 typedef struct _BLOCK{
 	SDL_Surface* image;
 } BLOCK;
@@ -26,4 +31,14 @@ typedef struct _BALL{
 	int stepx, stepy;
 } BALL;
 
+typedef struct _VETOR{
+	float x, y;
+} VETOR;
+
+typedef struct _PAD{
+	SDL_Surface* image;
+	int posx, posy;
+	VETOR vetor;
+} PAD;
+	
 #endif

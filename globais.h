@@ -14,5 +14,7 @@ extern BALL gBall;
 
 extern int Mapa1[10][10];
 
+extern PAD gPad;
+
 
 #endif
