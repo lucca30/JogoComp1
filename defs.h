@@ -20,6 +20,7 @@
 #define PAD_HEIGHT 80
 #define PAD_ADDRESS "./img/pad.jpg"
 #define Vmax 10
+#define MOD(a)a>0?a:-a
 
 typedef struct _BLOCK{
 	SDL_Surface* image;
@@ -40,5 +41,5 @@ typedef struct _PAD{
 	int posx, posy;
 	VETOR vetor;
 } PAD;
-	
+
 #endif

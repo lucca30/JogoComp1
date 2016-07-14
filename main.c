@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <math.h>
 #include "defs.h"
 #include "globais.h"
 #include "func.h"
@@ -27,9 +28,9 @@ int main(int argc, char* args[]){
 		if(!createBlock(&gBlock1, BLOCK_ADDRESS1) || !createBall(&gBall, BALL_ADRESS) || !createPad(&gPad, PAD_ADDRESS)){
 			quit=false;
 		}
-		
-		
-		
+
+
+
 		while(!quit){
 			while(SDL_PollEvent(&e) != 0 ){
 				switch(e.type){
@@ -48,18 +49,18 @@ int main(int argc, char* args[]){
 			}
 			aceleratePad(&gPad);
 			SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0x00, 0x88, 0xFF));
-			colisao(&gBall);
 			if(!moveBall(&gBall)){
 				quit = false;
 				puts("Problemas ao imprimir a bola.\n");
 			}
+			colisao(&gBall, Mapa1);
 			if(!imprimeMapa(Mapa1)){
 				quit = false;
 				puts("Problemas ao imprimir um bloco.\n");
 			}
 			if(!movePad(&gPad)){
 				quit = false;
-				puts("Problemas ao imprimir o pad.\n");				
+				puts("Problemas ao imprimir o pad.\n");
 				}
 			SDL_UpdateWindowSurface(gWindow);
 			SDL_Delay(1000/FPS);

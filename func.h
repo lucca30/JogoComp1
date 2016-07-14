@@ -26,10 +26,11 @@ int moveBall(BALL *b);
  *  Responsável por "Blitar" movimento da bola, através do stepx e stepy
  * atribuídos a ela
  */
-void colisao(BALL *b);
+void colisao(BALL *b, int mapa[10][10]);
 /*
- * Versão Alpha:
- * Identifica apenas colisão com a extremidade da tela
+ * Versão Alpha2.0:
+ * Identifica colisão com a extremidade da tela
+ * Identifica colisão com os blocos
  */
 int createPad(PAD *p, char *address);
 /*
@@ -42,4 +43,8 @@ int movePad(PAD *p);
 void aceleratePad(PAD *p);
 /*
  * Se teclas ESQ ou DIR forem pressionadas, move o pad.
+ */
+double distancia(int x1, int y1, int x2, int y2);
+/*
+ * Retorna a distancia entre dois pontos
  */

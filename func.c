@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-
+#include <math.h>
 #include "defs.h"
 #include "globais.h"
 #include "func.h"
@@ -52,7 +52,7 @@ int createBall(BALL *b, char *address){
 	b->posx = 400;
 	b->posy = 400;
 	b->stepx = -10;
-	b->stepy = -5;
+	b->stepy = -7;
 	return success;
 }
 
@@ -76,13 +76,62 @@ int moveBall(BALL *b){
 	return success;
 }
 
-void colisao(BALL *b){
+void colisao(BALL *b, int mapa[10][10]){
+	int i, j;
 	if(b->posx >= SCREEN_WIDTH - BALL_WIDTH/2 || b->posx <= BALL_WIDTH/2){
 		b->stepx = -(b->stepx);
+		return;
 	}
 	if(b->posy >= SCREEN_HEIGHT - BALL_HEIGHT/2 || b->posy <= BALL_HEIGHT/2){
 		b->stepy = -(b->stepy);
+		return;
 	}
+	for(i=0;i<10;i++){
+		for(j=0;j<10;j++){
+			if(mapa[i][j]!=0){
+				if(b->posx >= j*BLOCK_WIDTH && b->posx <= (j+1)*BLOCK_WIDTH){
+					if(b->posy <= (i+1)*BLOCK_HEIGHT + BALL_HEIGHT/2 && b->posy >= i*BLOCK_HEIGHT - BALL_HEIGHT/2){
+						mapa[i][j]=0;
+						b->stepy = -(b->stepy);
+						return;
+					}
+				}
+				if(b->posy >= (i)*BLOCK_HEIGHT && b->posy <= (i+1)*BLOCK_HEIGHT){
+					if(b->posx >= j*BLOCK_WIDTH - BALL_WIDTH/2 && b->posx <= (j+1)*BLOCK_WIDTH - BALL_WIDTH/2){
+						mapa[i][j]=0;
+						b->stepx = -(b->stepx);
+						return;
+					}
+				}
+				if(distancia(b->posx, b->posy, j*BLOCK_WIDTH, i*BLOCK_HEIGHT) < BALL_WIDTH/2){
+					mapa[i][j] = 0;
+					b->stepx = -MOD(b->stepx);
+					b->stepy = -MOD(b->stepy);
+					return;
+				}
+				if(distancia(b->posx, b->posy, (j+1)*BLOCK_WIDTH, i*BLOCK_HEIGHT) < BALL_WIDTH/2){
+					mapa[i][j] = 0;
+					b->stepx = MOD(b->stepx);
+					b->stepy = -MOD(b->stepy);
+					return;
+				}
+				if(distancia(b->posx, b->posy, j*BLOCK_WIDTH, (i+1)*BLOCK_HEIGHT) < BALL_WIDTH/2){
+					mapa[i][j] = 0;
+					b->stepx = -MOD(b->stepx);
+					b->stepy = MOD(b->stepy);
+					return;
+				}
+				if(distancia(b->posx, b->posy, (j+1)*BLOCK_WIDTH, (i+1)*BLOCK_HEIGHT) < BALL_WIDTH/2){
+					mapa[i][j] = 0;
+					b->stepx = MOD(b->stepx);
+					b->stepy = MOD(b->stepy);
+					return;
+				}
+
+			}
+		}
+	}
+
 }
 
 int init(){
@@ -161,7 +210,7 @@ int createPad(PAD *p, char *address){
 		success = false;
 		puts("Imagem do pad não foi carregada.");
 	}
-	SDL_SetColorKey(p->image, SDL_TRUE, SDL_MapRGB( (p->image)->format, 0, 0, 0));
+	SDL_SetColorKey(p->image, SDL_TRUE, SDL_MapRGB( (p->image)->format, 0xFF, 0xFF, 0xFF));
 	p->posx = 400;
 	p->posy = 500;
 	p->vetor.x = 0;
@@ -198,3 +247,7 @@ void aceleratePad(PAD *p){
 		p->vetor.x = p->vetor.x - 2;
 		}
 	}
+
+double distancia(int x1, int y1, int x2, int y2){
+	return sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+}
