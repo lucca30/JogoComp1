@@ -48,12 +48,12 @@ int main(int argc, char* args[]){
 				}
 			}
 			aceleratePad(&gPad);
-			SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0x00, 0x88, 0xFF));
+			SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0xFF, 0xFF, 0xFF));
 			if(!moveBall(&gBall)){
 				quit = false;
 				puts("Problemas ao imprimir a bola.\n");
 			}
-			colisao(&gBall, Mapa1);
+			colisao(&gBall, Mapa1, &gPad);
 			if(!imprimeMapa(Mapa1)){
 				quit = false;
 				puts("Problemas ao imprimir um bloco.\n");

@@ -26,11 +26,12 @@ int moveBall(BALL *b);
  *  Responsável por "Blitar" movimento da bola, através do stepx e stepy
  * atribuídos a ela
  */
-void colisao(BALL *b, int mapa[10][10]);
+void colisao(BALL *b, int mapa[10][10], PAD *p);
 /*
- * Versão Alpha2.0:
+ * Versão Beta1.0:
  * Identifica colisão com a extremidade da tela
  * Identifica colisão com os blocos
+ * Identifica colisão com o PAD (somente na parte superior) 
  */
 int createPad(PAD *p, char *address);
 /*

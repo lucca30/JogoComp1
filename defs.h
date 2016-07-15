@@ -18,8 +18,10 @@
 
 #define PAD_WIDTH 200
 #define PAD_HEIGHT 80
-#define PAD_ADDRESS "./img/pad.jpg"
+#define PAD_ADDRESS "./img/pad.png"
+#define PAD_CORRECT 20 /* Corrigir o tamanho da base superior */
 #define Vmax 10
+
 #define MOD(a)a>0?a:-a
 
 typedef struct _BLOCK{

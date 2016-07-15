@@ -76,13 +76,17 @@ int moveBall(BALL *b){
 	return success;
 }
 
-void colisao(BALL *b, int mapa[10][10]){
+void colisao(BALL *b, int mapa[10][10], PAD *p){
 	int i, j;
 	if(b->posx >= SCREEN_WIDTH - BALL_WIDTH/2 || b->posx <= BALL_WIDTH/2){
 		b->stepx = -(b->stepx);
 		return;
 	}
 	if(b->posy >= SCREEN_HEIGHT - BALL_HEIGHT/2 || b->posy <= BALL_HEIGHT/2){
+		b->stepy = -(b->stepy);
+		return;
+	}
+	if(b->posx >= p->posx - PAD_WIDTH/2 + PAD_CORRECT  &&  b->posx <= p->posx + PAD_WIDTH/2 - PAD_CORRECT && b->posy >= p->posy - PAD_HEIGHT/2 - BALL_HEIGHT/2){
 		b->stepy = -(b->stepy);
 		return;
 	}
@@ -210,9 +214,9 @@ int createPad(PAD *p, char *address){
 		success = false;
 		puts("Imagem do pad não foi carregada.");
 	}
-	SDL_SetColorKey(p->image, SDL_TRUE, SDL_MapRGB( (p->image)->format, 0xFF, 0xFF, 0xFF));
+	SDL_SetColorKey(p->image, SDL_TRUE, SDL_MapRGB( (p->image)->format, 0xFF, 0, 0xFF));
 	p->posx = 400;
-	p->posy = 500;
+	p->posy = 540;
 	p->vetor.x = 0;
 	p->vetor.y = 0;
 	return success;
@@ -228,8 +232,14 @@ int movePad(PAD *p){
 
 	p->posx += p->vetor.x;
 	p->posy += p->vetor.y;
-	destRct.x = p->posx;
-	destRct.y = p->posy;
+	if(p->posx>=SCREEN_WIDTH - PAD_WIDTH/2){
+		p->posx = SCREEN_WIDTH - PAD_WIDTH/2;
+	}
+	if(p->posx<=PAD_WIDTH/2){
+		p->posx = PAD_WIDTH/2;
+	}
+	destRct.x = p->posx - PAD_WIDTH/2;
+	destRct.y = p->posy - PAD_HEIGHT/2;
 	if(SDL_BlitSurface(p->image, &srcRct, gScreenSurface, &destRct) < 0){
 		printf("SDL could not blit! SDL Error: %s\n", SDL_GetError());
 		success = false;
@@ -243,10 +253,16 @@ void aceleratePad(PAD *p){
 	if (state[SDL_SCANCODE_RIGHT] > 0 && p->vetor.x <= Vmax){
 		p->vetor.x = p->vetor.x + 2;
 		}
-	if (state[SDL_SCANCODE_LEFT] > 0 && p->vetor.x >= -Vmax){
+	else if (state[SDL_SCANCODE_LEFT] > 0 && p->vetor.x >= -Vmax){
 		p->vetor.x = p->vetor.x - 2;
 		}
+	else{
+		if(p->vetor.x==0){
+			return;
+		}
+		p->vetor.x = (p->vetor.x)>0?(p->vetor.x-1):(p->vetor.x+1);
 	}
+}
 
 double distancia(int x1, int y1, int x2, int y2){
 	return sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
