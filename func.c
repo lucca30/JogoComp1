@@ -51,8 +51,8 @@ int createBall(BALL *b, char *address){
 	SDL_SetColorKey(b->image, SDL_TRUE, SDL_MapRGB( (b->image)->format, 0, 0, 0));
 	b->posx = 400;
 	b->posy = 400;
-	b->stepx = -10;
-	b->stepy = -7;
+	b->stepx = -5;
+	b->stepy = -3;
 	return success;
 }
 
@@ -86,9 +86,40 @@ void colisao(BALL *b, int mapa[10][10], PAD *p){
 		b->stepy = -(b->stepy);
 		return;
 	}
-	if(b->posx >= p->posx - PAD_WIDTH/2 + PAD_CORRECT  &&  b->posx <= p->posx + PAD_WIDTH/2 - PAD_CORRECT && b->posy >= p->posy - PAD_HEIGHT/2 - BALL_HEIGHT/2){
-		b->stepy = -(b->stepy);
+	int pad_sup_esq = p->posx - PAD_WIDTH/2 + PAD_CORRECT;
+	int pad_sup_dir = p->posx + PAD_WIDTH/2 - PAD_CORRECT;
+	int pad_base_sup = p->posy - PAD_HEIGHT/2 - BALL_HEIGHT/2;
+	if(b->posx >= pad_sup_esq &&  b->posx <= pad_sup_dir && b->posy >= pad_base_sup && b->posy <= pad_base_sup + PAD_HEIGHT/2){
+		b->stepy = -MOD(b->stepy);
 		return;
+	}
+	if(b->posy >= p->posy - PAD_HEIGHT/2 && b->posy <= p->posy + PAD_HEIGHT/2){
+		int pad_x_esquerdo = PAD_HEIGHT/2 - (b->posy - p->posy + PAD_HEIGHT)/2 + p->posx - PAD_WIDTH/2;
+		if(b->posx >= pad_x_esquerdo && b->posx < p->posx){
+			b->stepx = -MOD(b->stepx);
+			b->stepy = -MOD(b->stepy);
+			return;
+		}
+		int pad_x_direito = -PAD_HEIGHT/2 + (b->posy - p->posy + PAD_HEIGHT)/2 + p->posx + PAD_WIDTH/2 ;
+		if(b->posx <= pad_x_direito && b->posx > p->posx){
+			b->stepx = MOD(b->stepx);
+			b->stepy = -MOD(b->stepy);
+			return;
+		}
+		int pad_quina_x_esq = p->posx - PAD_WIDTH + PAD_HEIGHT/2;
+		int pad_quina_x_dir = p->posx + PAD_WIDTH - PAD_HEIGHT/2;
+		int pad_quina_y = p->posy - PAD_HEIGHT/2;
+		if(distancia(pad_quina_x_esq, pad_quina_y, b->posx, b->posy)< BALL_HEIGHT/2 - BALL_CORRECT){
+			b->stepx = -MOD(b->stepx);
+			b->stepy = -MOD(b->stepy);
+			return;
+		}
+		if(distancia(pad_quina_x_dir, pad_quina_y, b->posx, b->posy)< BALL_HEIGHT/2 - BALL_CORRECT){
+			b->stepx = MOD(b->stepx);
+			b->stepy = -MOD(b->stepy);
+			return;
+		}
+
 	}
 	for(i=0;i<10;i++){
 		for(j=0;j<10;j++){
@@ -107,25 +138,25 @@ void colisao(BALL *b, int mapa[10][10], PAD *p){
 						return;
 					}
 				}
-				if(distancia(b->posx, b->posy, j*BLOCK_WIDTH, i*BLOCK_HEIGHT) < BALL_WIDTH/2){
+				if(distancia(b->posx, b->posy, j*BLOCK_WIDTH, i*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
 					mapa[i][j] = 0;
 					b->stepx = -MOD(b->stepx);
 					b->stepy = -MOD(b->stepy);
 					return;
 				}
-				if(distancia(b->posx, b->posy, (j+1)*BLOCK_WIDTH, i*BLOCK_HEIGHT) < BALL_WIDTH/2){
+				if(distancia(b->posx, b->posy, (j+1)*BLOCK_WIDTH, i*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
 					mapa[i][j] = 0;
 					b->stepx = MOD(b->stepx);
 					b->stepy = -MOD(b->stepy);
 					return;
 				}
-				if(distancia(b->posx, b->posy, j*BLOCK_WIDTH, (i+1)*BLOCK_HEIGHT) < BALL_WIDTH/2){
+				if(distancia(b->posx, b->posy, j*BLOCK_WIDTH, (i+1)*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
 					mapa[i][j] = 0;
 					b->stepx = -MOD(b->stepx);
 					b->stepy = MOD(b->stepy);
 					return;
 				}
-				if(distancia(b->posx, b->posy, (j+1)*BLOCK_WIDTH, (i+1)*BLOCK_HEIGHT) < BALL_WIDTH/2){
+				if(distancia(b->posx, b->posy, (j+1)*BLOCK_WIDTH, (i+1)*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
 					mapa[i][j] = 0;
 					b->stepx = MOD(b->stepx);
 					b->stepy = MOD(b->stepy);
@@ -251,10 +282,10 @@ int movePad(PAD *p){
 void aceleratePad(PAD *p){
 	const Uint8 *state = SDL_GetKeyboardState(NULL);
 	if (state[SDL_SCANCODE_RIGHT] > 0 && p->vetor.x <= Vmax){
-		p->vetor.x = p->vetor.x + 2;
+		p->vetor.x = p->vetor.x + 1;
 		}
 	else if (state[SDL_SCANCODE_LEFT] > 0 && p->vetor.x >= -Vmax){
-		p->vetor.x = p->vetor.x - 2;
+		p->vetor.x = p->vetor.x - 1;
 		}
 	else{
 		if(p->vetor.x==0){

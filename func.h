@@ -28,10 +28,10 @@ int moveBall(BALL *b);
  */
 void colisao(BALL *b, int mapa[10][10], PAD *p);
 /*
- * Versão Beta1.0:
+ * Versão Beta1.5:
  * Identifica colisão com a extremidade da tela
  * Identifica colisão com os blocos
- * Identifica colisão com o PAD (somente na parte superior) 
+ * Identifica colisão com o PAD, na sua parte superior, quinas e laterais 
  */
 int createPad(PAD *p, char *address);
 /*

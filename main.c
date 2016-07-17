@@ -1,11 +1,11 @@
 /*
- * Teste 2.2 de Computação 1
+ * ULTIMATE NEOTRON HD
  *
  * Autores: Henrique Vermelho, Lucca Martins, Pedro Vitor
  *
- * Descrição: Este programa gera uma janela na qual contém duas imagens, ao clicarmos em uma delas,
- *            trocamos suas posições (uma pela outra). A janela deve fechar ao apertarmos Q, ESC ou
- *            quando apertarmos o botão fechar da janela.
+ * Descrição: Este programa escrito em C com a biblioteca gŕafica SDL simula o jogo
+ *            Breakout
+ *
  */
 
 #include <stdio.h>
