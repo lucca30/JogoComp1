@@ -135,26 +135,34 @@ void colisao(BALL *b, int mapa[10][9], PAD *p){
 					if(b->posx >= j*BLOCK_WIDTH - BALL_WIDTH/2 + BLOCK_WIDTH/2 && b->posx <= j*BLOCK_WIDTH + BLOCK_WIDTH){
 						mapa[i][j]=0;
 						b->stepx = -MOD(b->stepx);
+						b->posx += b->stepx/2;
+						b->posy += b->stepy/2;
 						puts("i1");
 						return;
 					}
 					if(b->posx <= (j+1)*BLOCK_WIDTH - BALL_WIDTH/2 +BLOCK_WIDTH/2 && b->posx >= (j+1)*BLOCK_WIDTH){
 						mapa[i][j]=0;
 						b->stepx = MOD(b->stepx);
+						b->posx += b->stepx/2;
+						b->posy += b->stepy/2;
 						puts("i2");
 						return;
 					}
 				}
 				if(b->posx > j*BLOCK_WIDTH + BLOCK_WIDTH/2 && b->posx < (j+1)*BLOCK_WIDTH + BLOCK_WIDTH/2){
-					if(b->posy >= i*BLOCK_HEIGHT - BALL_HEIGHT/2 && b->posy <= i*BLOCK_HEIGHT + BLOCK_HEIGHT/2){
+					if(b->posy >= i*BLOCK_HEIGHT - BALL_HEIGHT/2 && b->posy <= i*BLOCK_HEIGHT ){
 						mapa[i][j]=0;
 						b->stepy = -MOD(b->stepy);
+						b->posx += b->stepx/2;
+						b->posy += b->stepy/2;
 						puts("h2");
 						return;
 					}
-					if(b->posy <= (i+1)*BLOCK_HEIGHT + BALL_HEIGHT/2 && b->posy >= (i+1)*BLOCK_HEIGHT - BLOCK_HEIGHT/2){
+					if(b->posy <= (i+1)*BLOCK_HEIGHT + BALL_HEIGHT/2 && b->posy >= (i+1)*BLOCK_HEIGHT ){
 						mapa[i][j]=0;
 						b->stepy = MOD(b->stepy);
+						b->posx += b->stepx/2;
+						b->posy += b->stepy/2;
 						puts("h1");
 						return;
 					}
@@ -163,6 +171,8 @@ void colisao(BALL *b, int mapa[10][9], PAD *p){
 					mapa[i][j] = 0;
 					b->stepx = -MOD(b->stepx);
 					b->stepy = -MOD(b->stepy);
+					b->posx += b->stepx/2;
+					b->posy += b->stepy/2;
 					puts("j");
 					return;
 				}
@@ -170,6 +180,8 @@ void colisao(BALL *b, int mapa[10][9], PAD *p){
 					mapa[i][j] = 0;
 					b->stepx = MOD(b->stepx);
 					b->stepy = -MOD(b->stepy);
+					b->posx += b->stepx/2;
+					b->posy += b->stepy/2;
 					puts("k");
 					return;
 				}
@@ -177,6 +189,8 @@ void colisao(BALL *b, int mapa[10][9], PAD *p){
 					mapa[i][j] = 0;
 					b->stepx = -MOD(b->stepx);
 					b->stepy = MOD(b->stepy);
+					b->posx += b->stepx/2;
+					b->posy += b->stepy/2;
 					puts("l");
 					return;
 				}
@@ -184,6 +198,8 @@ void colisao(BALL *b, int mapa[10][9], PAD *p){
 					mapa[i][j] = 0;
 					b->stepx = MOD(b->stepx);
 					b->stepy = MOD(b->stepy);
+					b->posx += b->stepx/2;
+					b->posy += b->stepy/2;
 					puts("m");
 					return;
 				}
