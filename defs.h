@@ -27,6 +27,20 @@
 #define PAD_CORRECT 20 /* Corrigir o tamanho da base superior */
 #define Vmax 5
 
+//PAD colision constants
+#define PAD_COL_1E_x 20-PAD_WIDTH/2
+#define PAD_COL_1D_x 180-PAD_WIDTH/2
+#define PAD_COL_1_y 0-PAD_HEIGHT/2
+#define PAD_COL_2E_x 15-PAD_WIDTH/2
+#define PAD_COL_2D_x 185-PAD_WIDTH/2
+#define PAD_COL_2_y 13-PAD_HEIGHT/2
+#define PAD_COL_3E_x 10-PAD_WIDTH/2
+#define PAD_COL_3D_x 190-PAD_WIDTH/2
+#define PAD_COL_3_y 25-PAD_HEIGHT/2
+#define PAD_COL_4E_x 0-PAD_WIDTH/2
+#define PAD_COL_4D_x 200-PAD_WIDTH/2
+#define PAD_COL_4_y 40-PAD_HEIGHT/2
+
 //MACROS
 #define MOD(a)a>0?a:-a
 

@@ -78,84 +78,95 @@ int moveBall(BALL *b){
 
 void colisao(BALL *b, int mapa[10][9], PAD *p){
 	int i, j;
+	//Colisão com as laterais das paredes
 	if(b->posx >= SCREEN_WIDTH - BALL_WIDTH/2 - BLOCK_WIDTH/2 || b->posx <= BALL_WIDTH/2 + BLOCK_WIDTH/2){
 		b->stepx = -(b->stepx);
-		puts("a");
 		return;
 	}
+	//Colisão com o topo
 	if(b->posy >= SCREEN_HEIGHT - BALL_HEIGHT/2 || b->posy <= BALL_HEIGHT/2 + BLOCK_HEIGHT){
 		b->stepy = -(b->stepy);
-		puts("b");
 		return;
 	}
 	int pad_sup_esq = p->posx - PAD_WIDTH/2 + PAD_CORRECT;
 	int pad_sup_dir = p->posx + PAD_WIDTH/2 - PAD_CORRECT;
 	int pad_base_sup = p->posy - PAD_HEIGHT/2 - BALL_HEIGHT/2;
+	//Colisão com a parte superior do pad
 	if(b->posx >= pad_sup_esq &&  b->posx <= pad_sup_dir && b->posy >= pad_base_sup && b->posy <= pad_base_sup + PAD_HEIGHT/2){
 		b->stepy = -MOD(b->stepy);
-		puts("c");
 		return;
 	}
-	if(b->posy >= p->posy - PAD_HEIGHT/2 && b->posy <= p->posy + PAD_HEIGHT/2){
-		int pad_x_esquerdo = PAD_HEIGHT/2 - (b->posy - p->posy + PAD_HEIGHT)/2 + p->posx - PAD_WIDTH/2;
-		if(b->posx >= pad_x_esquerdo && b->posx < p->posx){
-			b->stepx = -MOD(b->stepx);
-			b->stepy = -MOD(b->stepy);
-			puts("d");
-			return;
-		}
-		int pad_x_direito = -PAD_HEIGHT/2 + (b->posy - p->posy + PAD_HEIGHT)/2 + p->posx + PAD_WIDTH/2 ;
-		if(b->posx <= pad_x_direito && b->posx > p->posx){
-			b->stepx = MOD(b->stepx);
-			b->stepy = -MOD(b->stepy);
-			puts("e");
-			return;
-		}
-		int pad_quina_x_esq = p->posx - PAD_WIDTH + PAD_HEIGHT/2;
-		int pad_quina_x_dir = p->posx + PAD_WIDTH - PAD_HEIGHT/2;
-		int pad_quina_y = p->posy - PAD_HEIGHT/2;
-		if(distancia(pad_quina_x_esq, pad_quina_y, b->posx, b->posy)< BALL_HEIGHT/2 - BALL_CORRECT){
-			b->stepx = -MOD(b->stepx);
-			b->stepy = -MOD(b->stepy);
-			puts("f");
-			return;
-		}
-		if(distancia(pad_quina_x_dir, pad_quina_y, b->posx, b->posy)< BALL_HEIGHT/2 - BALL_CORRECT){
-			b->stepx = MOD(b->stepx);
-			b->stepy = -MOD(b->stepy);
-			puts("g");
-			return;
-		}
-
+	//Colisão com os pontos de colisão do pad
+	if(distancia(b->posx, b->posy,p->posx+PAD_COL_1E_x,p->posy+PAD_COL_1_y) <= BALL_WIDTH/2){
+		b->stepy = -MOD(b->stepy);
+		b->stepx = -MOD(b->stepx);
+		return;
 	}
+	if(distancia(b->posx, b->posy,p->posx+PAD_COL_2E_x,p->posy+PAD_COL_2_y) <= BALL_WIDTH/2){
+		b->stepy = -MOD(b->stepy);
+		b->stepx = -MOD(b->stepx);
+		return;
+	}
+	if(distancia(b->posx, b->posy,p->posx+PAD_COL_3E_x,p->posy+PAD_COL_3_y) <= BALL_WIDTH/2){
+		b->stepy = -MOD(b->stepy);
+		b->stepx = -MOD(b->stepx);
+		return;
+	}
+	if(distancia(b->posx, b->posy,p->posx+PAD_COL_4E_x,p->posy+PAD_COL_4_y) <= BALL_WIDTH/2){
+		b->stepy = -MOD(b->stepy);
+		b->stepx = -MOD(b->stepx);
+		return;
+	}
+	if(distancia(b->posx, b->posy,p->posx+PAD_COL_1D_x,p->posy+PAD_COL_1_y) <= BALL_WIDTH/2){
+		b->stepy = -MOD(b->stepy);
+		b->stepx = MOD(b->stepx);
+		return;
+	}
+	if(distancia(b->posx, b->posy,p->posx+PAD_COL_2D_x,p->posy+PAD_COL_2_y) <= BALL_WIDTH/2){
+		b->stepy = -MOD(b->stepy);
+		b->stepx = MOD(b->stepx);
+		return;
+	}
+	if(distancia(b->posx, b->posy,p->posx+PAD_COL_3D_x,p->posy+PAD_COL_3_y) <= BALL_WIDTH/2){
+		b->stepy = -MOD(b->stepy);
+		b->stepx = MOD(b->stepx);
+		return;
+	}
+	if(distancia(b->posx, b->posy,p->posx+PAD_COL_4D_x,p->posy+PAD_COL_4_y) <= BALL_WIDTH/2){
+		b->stepy = -MOD(b->stepy);
+		b->stepx = MOD(b->stepx);
+		return;
+	}
+
+	//Colisão de Blocos
 	for(i=9;i>=0;i--){
 		for(j=8;j>=0;j--){
 			if(mapa[i][j]!=0){
 				if(b->posy > (i)*BLOCK_HEIGHT && b->posy < (i+1)*BLOCK_HEIGHT){
+					//Colisão com a parte esquerda do bloco
 					if(b->posx >= j*BLOCK_WIDTH - BALL_WIDTH/2 + BLOCK_WIDTH/2 && b->posx <= j*BLOCK_WIDTH + BLOCK_WIDTH){
 						mapa[i][j]=0;
 						b->stepx = -MOD(b->stepx);
-						puts("i1");
 						return;
 					}
+					//Colisão com a parte direita do bloco
 					if(b->posx <= (j+1)*BLOCK_WIDTH + BALL_WIDTH/2 +BLOCK_WIDTH/2 && b->posx >= (j+1)*BLOCK_WIDTH){
 						mapa[i][j]=0;
 						b->stepx = MOD(b->stepx);
-						puts("i2");
 						return;
 					}
 				}
+				//Colisão com parte superior do bloco
 				if(b->posx > j*BLOCK_WIDTH + BLOCK_WIDTH/2 && b->posx < (j+1)*BLOCK_WIDTH + BLOCK_WIDTH/2){
 					if(b->posy >= i*BLOCK_HEIGHT - BALL_HEIGHT/2 && b->posy <= i*BLOCK_HEIGHT ){
 						mapa[i][j]=0;
 						b->stepy = -MOD(b->stepy);
-						puts("h2");
 						return;
 					}
+					//Colisão com a parte inferior do bloco
 					if(b->posy <= (i+1)*BLOCK_HEIGHT + BALL_HEIGHT/2 && b->posy >= (i+1)*BLOCK_HEIGHT ){
 						mapa[i][j]=0;
 						b->stepy = MOD(b->stepy);
-						puts("h1");
 						return;
 					}
 				}
@@ -163,28 +174,24 @@ void colisao(BALL *b, int mapa[10][9], PAD *p){
 					mapa[i][j] = 0;
 					b->stepx = -MOD(b->stepx);
 					b->stepy = -MOD(b->stepy);
-					puts("j");
 					return;
 				}
 				if(distancia(b->posx, b->posy, (j+1)*BLOCK_WIDTH + BLOCK_WIDTH/2, i*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
 					mapa[i][j] = 0;
 					b->stepx = MOD(b->stepx);
 					b->stepy = -MOD(b->stepy);
-					puts("k");
 					return;
 				}
 				if(distancia(b->posx, b->posy, j*BLOCK_WIDTH + BLOCK_WIDTH/2, (i+1)*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
 					mapa[i][j] = 0;
 					b->stepx = -MOD(b->stepx);
 					b->stepy = MOD(b->stepy);
-					puts("l");
 					return;
 				}
 				if(distancia(b->posx, b->posy, (j+1)*BLOCK_WIDTH + BLOCK_WIDTH/2, (i+1)*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
 					mapa[i][j] = 0;
 					b->stepx = MOD(b->stepx);
 					b->stepy = MOD(b->stepy);
-					puts("m");
 					return;
 				}
 			}
@@ -200,7 +207,7 @@ int init(){
         success = false;
     }
     else{
-        gWindow = SDL_CreateWindow("Teste 2.2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+        gWindow = SDL_CreateWindow("Ultimate Neotron HD PLUS PREMIUM", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
         if(gWindow == NULL)
         {
             printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
