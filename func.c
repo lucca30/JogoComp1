@@ -6,7 +6,7 @@
 #include "globais.h"
 #include "func.h"
 
-int imprimeMapa(int mapa[10][10]){
+int imprimeMapa(int mapa[10][9]){
 	int i, j;
 	int success = true;
 	SDL_Rect srcRct, destRct;
@@ -15,10 +15,10 @@ int imprimeMapa(int mapa[10][10]){
 	srcRct.w = BLOCK_WIDTH;
 	srcRct.h = BLOCK_HEIGHT;
 	for(i=0;i<10;i++){
-		for(j=0;j<10;j++){
+		for(j=0;j<9;j++){
 			switch (mapa[i][j]) {
 				case 1:
-					destRct.x=j*BLOCK_WIDTH;
+					destRct.x=j*BLOCK_WIDTH + BLOCK_WIDTH/2;
 					destRct.y=i*BLOCK_HEIGHT;
 					if(SDL_BlitSurface(gBlock1.image, &srcRct, gScreenSurface, &destRct) < 0){
 						printf("SDL could not blit! SDL Error: %s\n", SDL_GetError());
@@ -48,7 +48,7 @@ int createBall(BALL *b, char *address){
 		success = false;
 		puts("Imagem da bola não foi carregada.");
 	}
-	SDL_SetColorKey(b->image, SDL_TRUE, SDL_MapRGB( (b->image)->format, 0, 0, 0));
+	SDL_SetColorKey(b->image, SDL_TRUE, SDL_MapRGB( (b->image)->format, 0xFF, 0, 0xFF));
 	b->posx = 400;
 	b->posy = 400;
 	b->stepx = -5;
@@ -76,14 +76,16 @@ int moveBall(BALL *b){
 	return success;
 }
 
-void colisao(BALL *b, int mapa[10][10], PAD *p){
+void colisao(BALL *b, int mapa[10][9], PAD *p){
 	int i, j;
-	if(b->posx >= SCREEN_WIDTH - BALL_WIDTH/2 || b->posx <= BALL_WIDTH/2){
+	if(b->posx >= SCREEN_WIDTH - BALL_WIDTH/2 - BLOCK_WIDTH/2 || b->posx <= BALL_WIDTH/2 + BLOCK_WIDTH/2){
 		b->stepx = -(b->stepx);
+		puts("a");
 		return;
 	}
-	if(b->posy >= SCREEN_HEIGHT - BALL_HEIGHT/2 || b->posy <= BALL_HEIGHT/2){
+	if(b->posy >= SCREEN_HEIGHT - BALL_HEIGHT/2 || b->posy <= BALL_HEIGHT/2 + BLOCK_HEIGHT){
 		b->stepy = -(b->stepy);
+		puts("b");
 		return;
 	}
 	int pad_sup_esq = p->posx - PAD_WIDTH/2 + PAD_CORRECT;
@@ -91,6 +93,7 @@ void colisao(BALL *b, int mapa[10][10], PAD *p){
 	int pad_base_sup = p->posy - PAD_HEIGHT/2 - BALL_HEIGHT/2;
 	if(b->posx >= pad_sup_esq &&  b->posx <= pad_sup_dir && b->posy >= pad_base_sup && b->posy <= pad_base_sup + PAD_HEIGHT/2){
 		b->stepy = -MOD(b->stepy);
+		puts("c");
 		return;
 	}
 	if(b->posy >= p->posy - PAD_HEIGHT/2 && b->posy <= p->posy + PAD_HEIGHT/2){
@@ -98,12 +101,14 @@ void colisao(BALL *b, int mapa[10][10], PAD *p){
 		if(b->posx >= pad_x_esquerdo && b->posx < p->posx){
 			b->stepx = -MOD(b->stepx);
 			b->stepy = -MOD(b->stepy);
+			puts("d");
 			return;
 		}
 		int pad_x_direito = -PAD_HEIGHT/2 + (b->posy - p->posy + PAD_HEIGHT)/2 + p->posx + PAD_WIDTH/2 ;
 		if(b->posx <= pad_x_direito && b->posx > p->posx){
 			b->stepx = MOD(b->stepx);
 			b->stepy = -MOD(b->stepy);
+			puts("e");
 			return;
 		}
 		int pad_quina_x_esq = p->posx - PAD_WIDTH + PAD_HEIGHT/2;
@@ -112,61 +117,79 @@ void colisao(BALL *b, int mapa[10][10], PAD *p){
 		if(distancia(pad_quina_x_esq, pad_quina_y, b->posx, b->posy)< BALL_HEIGHT/2 - BALL_CORRECT){
 			b->stepx = -MOD(b->stepx);
 			b->stepy = -MOD(b->stepy);
+			puts("f");
 			return;
 		}
 		if(distancia(pad_quina_x_dir, pad_quina_y, b->posx, b->posy)< BALL_HEIGHT/2 - BALL_CORRECT){
 			b->stepx = MOD(b->stepx);
 			b->stepy = -MOD(b->stepy);
+			puts("g");
 			return;
 		}
 
 	}
-	for(i=0;i<10;i++){
-		for(j=0;j<10;j++){
+	for(i=9;i>=0;i--){
+		for(j=8;j>=0;j--){
 			if(mapa[i][j]!=0){
-				if(b->posx >= j*BLOCK_WIDTH && b->posx <= (j+1)*BLOCK_WIDTH){
-					if(b->posy <= (i+1)*BLOCK_HEIGHT + BALL_HEIGHT/2 && b->posy >= i*BLOCK_HEIGHT - BALL_HEIGHT/2){
+				if(b->posy > (i)*BLOCK_HEIGHT && b->posy < (i+1)*BLOCK_HEIGHT){
+					if(b->posx >= j*BLOCK_WIDTH - BALL_WIDTH/2 + BLOCK_WIDTH/2 && b->posx <= j*BLOCK_WIDTH + BLOCK_WIDTH){
 						mapa[i][j]=0;
-						b->stepy = -(b->stepy);
+						b->stepx = -MOD(b->stepx);
+						puts("i1");
+						return;
+					}
+					if(b->posx <= (j+1)*BLOCK_WIDTH - BALL_WIDTH/2 +BLOCK_WIDTH/2 && b->posx >= (j+1)*BLOCK_WIDTH){
+						mapa[i][j]=0;
+						b->stepx = MOD(b->stepx);
+						puts("i2");
 						return;
 					}
 				}
-				if(b->posy >= (i)*BLOCK_HEIGHT && b->posy <= (i+1)*BLOCK_HEIGHT){
-					if(b->posx >= j*BLOCK_WIDTH - BALL_WIDTH/2 && b->posx <= (j+1)*BLOCK_WIDTH - BALL_WIDTH/2){
+				if(b->posx > j*BLOCK_WIDTH + BLOCK_WIDTH/2 && b->posx < (j+1)*BLOCK_WIDTH + BLOCK_WIDTH/2){
+					if(b->posy >= i*BLOCK_HEIGHT - BALL_HEIGHT/2 && b->posy <= i*BLOCK_HEIGHT + BLOCK_HEIGHT/2){
 						mapa[i][j]=0;
-						b->stepx = -(b->stepx);
+						b->stepy = -MOD(b->stepy);
+						puts("h2");
+						return;
+					}
+					if(b->posy <= (i+1)*BLOCK_HEIGHT + BALL_HEIGHT/2 && b->posy >= (i+1)*BLOCK_HEIGHT - BLOCK_HEIGHT/2){
+						mapa[i][j]=0;
+						b->stepy = MOD(b->stepy);
+						puts("h1");
 						return;
 					}
 				}
-				if(distancia(b->posx, b->posy, j*BLOCK_WIDTH, i*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
+				if(distancia(b->posx, b->posy, j*BLOCK_WIDTH + BLOCK_WIDTH/2, i*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
 					mapa[i][j] = 0;
 					b->stepx = -MOD(b->stepx);
 					b->stepy = -MOD(b->stepy);
+					puts("j");
 					return;
 				}
-				if(distancia(b->posx, b->posy, (j+1)*BLOCK_WIDTH, i*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
+				if(distancia(b->posx, b->posy, (j+1)*BLOCK_WIDTH + BLOCK_WIDTH/2, i*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
 					mapa[i][j] = 0;
 					b->stepx = MOD(b->stepx);
 					b->stepy = -MOD(b->stepy);
+					puts("k");
 					return;
 				}
-				if(distancia(b->posx, b->posy, j*BLOCK_WIDTH, (i+1)*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
+				if(distancia(b->posx, b->posy, j*BLOCK_WIDTH + BLOCK_WIDTH/2, (i+1)*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
 					mapa[i][j] = 0;
 					b->stepx = -MOD(b->stepx);
 					b->stepy = MOD(b->stepy);
+					puts("l");
 					return;
 				}
-				if(distancia(b->posx, b->posy, (j+1)*BLOCK_WIDTH, (i+1)*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
+				if(distancia(b->posx, b->posy, (j+1)*BLOCK_WIDTH + BLOCK_WIDTH/2, (i+1)*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
 					mapa[i][j] = 0;
 					b->stepx = MOD(b->stepx);
 					b->stepy = MOD(b->stepy);
+					puts("m");
 					return;
 				}
-
 			}
 		}
 	}
-
 }
 
 int init(){
@@ -263,11 +286,11 @@ int movePad(PAD *p){
 
 	p->posx += p->vetor.x;
 	p->posy += p->vetor.y;
-	if(p->posx>=SCREEN_WIDTH - PAD_WIDTH/2){
-		p->posx = SCREEN_WIDTH - PAD_WIDTH/2;
+	if(p->posx>=SCREEN_WIDTH - PAD_WIDTH/2 - BLOCK_WIDTH/2){
+		p->posx = SCREEN_WIDTH - PAD_WIDTH/2 - BLOCK_WIDTH/2;
 	}
-	if(p->posx<=PAD_WIDTH/2){
-		p->posx = PAD_WIDTH/2;
+	if(p->posx<=PAD_WIDTH/2 + BLOCK_WIDTH/2){
+		p->posx = PAD_WIDTH/2 + BLOCK_WIDTH/2;
 	}
 	destRct.x = p->posx - PAD_WIDTH/2;
 	destRct.y = p->posy - PAD_HEIGHT/2;

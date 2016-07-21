@@ -8,7 +8,7 @@ SDL_Surface* loadSurface(char *address);
  * Retorna o endereço de uma superfície com a imagem desejada carregada,
  * Permite não usar variáveis globais pra supefícies dos sprites
  */
-int imprimeMapa(int mapa[10][10]);
+int imprimeMapa(int mapa[10][9]);
 /*
  *  Interpreta a Projeção dos Blocos em formato de matriz e
  * faz o BLit na Tela
@@ -26,12 +26,12 @@ int moveBall(BALL *b);
  *  Responsável por "Blitar" movimento da bola, através do stepx e stepy
  * atribuídos a ela
  */
-void colisao(BALL *b, int mapa[10][10], PAD *p);
+void colisao(BALL *b, int mapa[10][9], PAD *p);
 /*
  * Versão Beta1.5:
  * Identifica colisão com a extremidade da tela
  * Identifica colisão com os blocos
- * Identifica colisão com o PAD, na sua parte superior, quinas e laterais 
+ * Identifica colisão com o PAD, na sua parte superior, quinas e laterais
  */
 int createPad(PAD *p, char *address);
 /*

@@ -12,7 +12,7 @@ extern BLOCK gBlock1;
 
 extern BALL gBall;
 
-extern int Mapa1[10][10];
+extern int Mapa1[10][9];
 
 extern PAD gPad;
 
