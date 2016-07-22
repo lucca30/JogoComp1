@@ -19,6 +19,7 @@
 #define BALL_HEIGHT 24
 #define BALL_ADRESS "./img/ball.png"
 #define BALL_CORRECT 2 /* Diminuir o ínidice de colisões com a quina */
+#define BALL_MOVE_PRECISION 100 /*Determinar uma escala de precisão para o movimento */
 
 //PAD constants
 #define PAD_WIDTH 200

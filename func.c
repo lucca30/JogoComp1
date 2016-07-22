@@ -51,8 +51,8 @@ int createBall(BALL *b, char *address){
 	SDL_SetColorKey(b->image, SDL_TRUE, SDL_MapRGB( (b->image)->format, 0xFF, 0, 0xFF));
 	b->posx = 400;
 	b->posy = 400;
-	b->stepx = -5;
-	b->stepy = -3;
+	b->stepx = -550;
+	b->stepy = -450;
 	return success;
 }
 
@@ -64,8 +64,8 @@ int moveBall(BALL *b, PAD *p, GAMESTATS *game){
 	srcRct.w = BALL_WIDTH;
 	srcRct.h = BALL_HEIGHT;
 	if(game->moving_ball){
-		b->posx += b->stepx;
-		b->posy += b->stepy;
+		b->posx += b->stepx/BALL_MOVE_PRECISION;
+		b->posy += b->stepy/BALL_MOVE_PRECISION;
 	}
 	else{
 		b->posx = p->posx;
