@@ -64,4 +64,8 @@ typedef struct _PAD{
 	VETOR vetor;
 } PAD;
 
+typedef struct _GAMESTATS{
+	int moving_ball;
+} GAMESTATS;
+
 #endif

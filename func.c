@@ -56,16 +56,21 @@ int createBall(BALL *b, char *address){
 	return success;
 }
 
-int moveBall(BALL *b){
+int moveBall(BALL *b, PAD *p, GAMESTATS *game){
 	int success = true;
 	SDL_Rect srcRct, destRct;
 	srcRct.x = 0;
 	srcRct.y = 0;
 	srcRct.w = BALL_WIDTH;
 	srcRct.h = BALL_HEIGHT;
-
-	b->posx += b->stepx;
-	b->posy += b->stepy;
+	if(game->moving_ball){
+		b->posx += b->stepx;
+		b->posy += b->stepy;
+	}
+	else{
+		b->posx = p->posx;
+		b->posy = p->posy - PAD_HEIGHT/2 - BALL_HEIGHT/2 + BALL_CORRECT;
+	}
 	destRct.x = b->posx - BALL_WIDTH/2;
 	destRct.y = b->posy - BALL_HEIGHT/2;
 	if(SDL_BlitSurface(b->image, &srcRct, gScreenSurface, &destRct) < 0){
@@ -76,7 +81,7 @@ int moveBall(BALL *b){
 	return success;
 }
 
-void colisao(BALL *b, int mapa[10][9], PAD *p){
+void colisao(BALL *b, int mapa[10][9], PAD *p, GAMESTATS *game){
 	int i, j;
 	//Colisão com as laterais das paredes
 	if(b->posx >= SCREEN_WIDTH - BALL_WIDTH/2 - BLOCK_WIDTH/2 || b->posx <= BALL_WIDTH/2 + BLOCK_WIDTH/2){
@@ -84,8 +89,12 @@ void colisao(BALL *b, int mapa[10][9], PAD *p){
 		return;
 	}
 	//Colisão com o topo
-	if(b->posy >= SCREEN_HEIGHT - BALL_HEIGHT/2 || b->posy <= BALL_HEIGHT/2 + BLOCK_HEIGHT){
-		b->stepy = -(b->stepy);
+	if(b->posy <= BALL_HEIGHT/2 + BLOCK_HEIGHT){
+		b->stepy = MOD(b->stepy);
+		return;
+	}
+	if(b->posy >= SCREEN_HEIGHT - BALL_HEIGHT/2 ){
+		game->moving_ball = false;
 		return;
 	}
 	int pad_sup_esq = p->posx - PAD_WIDTH/2 + PAD_CORRECT;

@@ -16,5 +16,6 @@ extern int Mapa1[10][9];
 
 extern PAD gPad;
 
+extern GAMESTATS gPlayer1;
 
 #endif

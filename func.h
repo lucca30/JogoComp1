@@ -21,12 +21,12 @@ int createBall(BALL *b, char *address);
 /*
  * Realiza uma atribuição aos elementos que a compoem
  */
-int moveBall(BALL *b);
+int moveBall(BALL *b, PAD *p, GAMESTATS *game);
 /*
  *  Responsável por "Blitar" movimento da bola, através do stepx e stepy
  * atribuídos a ela
  */
-void colisao(BALL *b, int mapa[10][9], PAD *p);
+void colisao(BALL *b, int mapa[10][9], PAD *p, GAMESTATS *game);
 /*
  * Versão Beta1.5:
  * Identifica colisão com a extremidade da tela

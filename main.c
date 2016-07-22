@@ -21,6 +21,7 @@
 int main(int argc, char* args[]){
 	int quit = false;
 	SDL_Event e;
+	gPlayer1.moving_ball = false;
 	if(!init()){
   		printf("Failed to initialize!\n");
   	}
@@ -43,17 +44,20 @@ int main(int argc, char* args[]){
 							case SDLK_q:
 					  		quit = true;
 					  		break;
+							case SDLK_SPACE:
+								gPlayer1.moving_ball = true;
+								break;
 						}
 						break;
 				}
 			}
 			aceleratePad(&gPad);
 			SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0xFF, 0xFF, 0xFF));
-			if(!moveBall(&gBall)){
+			if(!moveBall(&gBall, &gPad, &gPlayer1)){
 				quit = false;
 				puts("Problemas ao imprimir a bola.\n");
 			}
-			colisao(&gBall, Mapa1, &gPad);
+			colisao(&gBall, Mapa1, &gPad, &gPlayer1);
 			if(!imprimeMapa(Mapa1)){
 				quit = false;
 				puts("Problemas ao imprimir um bloco.\n");
