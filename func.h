@@ -49,3 +49,22 @@ double distancia(int x1, int y1, int x2, int y2);
 /*
  * Retorna a distancia entre dois pontos
  */
+
+int menuPause();
+/*
+ * Abre na tela um menu de pause.
+ */
+
+int createBackground(char *adress);
+/*
+ * Inicia o Background
+ * */
+int blitBackground(void);
+/*
+ * Imprime Background
+ * */
+
+void menuPrincipal(void);
+/*
+ * Menu principal
+ * */

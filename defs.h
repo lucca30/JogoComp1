@@ -12,13 +12,20 @@
 //BLOCK constants
 #define BLOCK_WIDTH 80
 #define BLOCK_HEIGHT 30
-#define BLOCK_ADDRESS1 "./img/block1.jpg"
+#define BLOCK_ADDRESS1 "./img/block1.png"
+
+//BACKGROUND constants
+#define BACKGROUND_ADRESS1 "./img/teste.png"
+#define TELAINICIAL_ADRESS1 "./img/telapr.png"
+#define FUNDOPAUSE_ADRESS1 "./img/telapause.png"
+
+#define BUTTON1_ADRESS1 "./img/button1.png"
 
 //BALL constants
 #define BALL_WIDTH 24
 #define BALL_HEIGHT 24
 #define BALL_ADRESS "./img/ball.png"
-#define BALL_CORRECT 2 /* Diminuir o ínidice de colisões com a quina */
+#define BALL_CORRECT 2 /* Diminuir o índice de colisões com a quina */
 #define BALL_MOVE_PRECISION 100 /*Determinar uma escala de precisão para o movimento */
 
 //PAD constants

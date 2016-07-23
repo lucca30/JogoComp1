@@ -38,6 +38,7 @@ int createBlock(BLOCK *b, char *address){
 		success = false;
 		puts("Imagem do bloco não foi carregada.");
 	}
+	SDL_SetColorKey(b->image, SDL_TRUE, SDL_MapRGB( (b->image)->format, 0xFF, 0, 0xFF));
 	return success;
 }
 
@@ -337,3 +338,130 @@ void aceleratePad(PAD *p){
 double distancia(int x1, int y1, int x2, int y2){
 	return sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
 }
+
+int menuPause(void){
+	SDL_Surface* menuTela = NULL;
+	SDL_Surface* fundo = NULL;
+	SDL_Rect destRct;
+	
+	destRct.x = 0;
+	destRct.y = 0;
+	destRct.w = 800;
+	destRct.h = 600;
+	
+	int quit = 0;
+	int quitGAME = 0;
+	SDL_Event e;
+	menuTela = SDL_GetWindowSurface( gWindow );
+	
+	fundo = loadSurface(FUNDOPAUSE_ADRESS1);
+	//teste se deu certo aqui
+	
+	while(!quit){
+		while(SDL_PollEvent(&e) != 0 ){
+				switch(e.type){
+					case SDL_QUIT:
+						quitGAME = 1;
+						quit = 1;
+						break;
+					case SDL_KEYDOWN:
+						switch(e.key.keysym.sym){
+							printf("merda\n");
+							case SDLK_ESCAPE:
+								quit = 1;
+								break;
+							}
+						break;
+				}
+			}
+		SDL_FillRect(menuTela, NULL, SDL_MapRGB(menuTela->format, 0xFF, 0xFF, 0xFF));
+		SDL_BlitSurface(fundo, NULL, menuTela, &destRct);
+		SDL_UpdateWindowSurface(gWindow);
+		SDL_Delay(1000/FPS);
+		}
+	return quitGAME;
+	}
+
+int createBackground(char *adress){
+	int success = true;
+	
+	gBackground = loadSurface(adress);
+	if(gBackground==NULL){
+		puts("Imagem do background não foi carregada.");
+		success = false;
+	}
+	return success;
+	}
+	
+int blitBackground(void){
+	int success = true;
+	SDL_Rect dstRectBackground;
+	
+	dstRectBackground.x = 0;
+	dstRectBackground.y = 0;
+	dstRectBackground.w = 800;
+	dstRectBackground.h = 600;
+	
+	if(SDL_BlitSurface(gBackground, NULL, gScreenSurface, &dstRectBackground) < 0){
+		printf("SDL could not blit! SDL Error: %s\n", SDL_GetError());
+		success = false;
+	}
+	return success;
+	}
+
+void menuPrincipal(void){
+	SDL_Surface* menuTela = NULL;
+	SDL_Surface* fundo = NULL;
+	SDL_Surface* botao1 = NULL;
+	
+	//Loading Surfaces
+	fundo = loadSurface(TELAINICIAL_ADRESS1);
+	if(fundo==NULL){
+		puts("Imagem da Tela Pr não foi carregada.");
+	}
+	botao1 = loadSurface(BUTTON1_ADRESS1);
+	if(botao1==NULL){
+		puts("Imagem da Botao1 não foi carregada.");
+	}
+	SDL_SetColorKey(botao1, SDL_TRUE, SDL_MapRGB( (botao1)->format, 0xFF, 0, 0xFF));
+	
+	//Rect da Imagem Principal
+	SDL_Rect dstImgPr;
+	dstImgPr.x = 0;
+	dstImgPr.y = 0;
+	dstImgPr.w = 800;
+	dstImgPr.h = 600;
+	
+	//Rect do botao1
+	SDL_Rect dstButt1;
+	dstButt1.x = 400 - 334/2 ;
+	dstButt1.y = 350;
+	dstButt1.w = 334;
+	dstButt1.h = 80;
+	
+	int quit = 0;
+	SDL_Event event;
+	menuTela = SDL_GetWindowSurface( gWindow );
+	//Guarda qual opcao de botao foi acionada
+	int opcaoSelecionada = 1;
+	
+	while(!quit){
+		while(SDL_PollEvent(&event) != 0 ){
+				switch(event.type){
+					case SDL_QUIT:
+						quit = 1;
+						break;
+					case SDL_KEYDOWN:
+						if (opcaoSelecionada == 1){
+							quit = 1;
+							}
+						break;
+				}
+			}
+		SDL_FillRect(menuTela, NULL, SDL_MapRGB(menuTela->format, 0xFF, 0xFF, 0xFF));
+		SDL_BlitSurface(fundo, NULL, menuTela, &dstImgPr);
+		SDL_BlitSurface(botao1, NULL, menuTela, &dstButt1);
+		SDL_UpdateWindowSurface(gWindow);
+		SDL_Delay(1000/FPS);
+		}
+	}

@@ -22,16 +22,19 @@ int main(int argc, char* args[]){
 	int quit = false;
 	SDL_Event e;
 	gPlayer1.moving_ball = false;
+	
+	
+	
 	if(!init()){
   		printf("Failed to initialize!\n");
   	}
 	else {
-		if(!createBlock(&gBlock1, BLOCK_ADDRESS1) || !createBall(&gBall, BALL_ADRESS) || !createPad(&gPad, PAD_ADDRESS)){
+		
+		menuPrincipal();
+		
+		if(!createBlock(&gBlock1, BLOCK_ADDRESS1) || !createBall(&gBall, BALL_ADRESS) || !createPad(&gPad, PAD_ADDRESS) || !createBackground(BACKGROUND_ADRESS1) ){
 			quit=false;
 		}
-
-
-
 		while(!quit){
 			while(SDL_PollEvent(&e) != 0 ){
 				switch(e.type){
@@ -41,9 +44,11 @@ int main(int argc, char* args[]){
 					case SDL_KEYDOWN:
 						switch(e.key.keysym.sym){
 							case SDLK_ESCAPE:
+								quit = menuPause();
+								break;
 							case SDLK_q:
-					  		quit = true;
-					  		break;
+								quit = true;
+								break;
 							case SDLK_SPACE:
 								gPlayer1.moving_ball = true;
 								break;
@@ -51,8 +56,14 @@ int main(int argc, char* args[]){
 						break;
 				}
 			}
+			
 			aceleratePad(&gPad);
 			SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0xFF, 0xFF, 0xFF));
+			
+			if (!blitBackground()){
+				quit = false;
+				puts("Problemas ao imprimir o fundo.\n");
+				}
 			if(!moveBall(&gBall, &gPad, &gPlayer1)){
 				quit = false;
 				puts("Problemas ao imprimir a bola.\n");
@@ -66,6 +77,7 @@ int main(int argc, char* args[]){
 				quit = false;
 				puts("Problemas ao imprimir o pad.\n");
 				}
+				
 			SDL_UpdateWindowSurface(gWindow);
 			SDL_Delay(1000/FPS);
 		}
