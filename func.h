@@ -68,3 +68,7 @@ void menuPrincipal(void);
 /*
  * Menu principal
  * */
+ void corrige(double *stepx);
+ /*
+  * Ajuste para vmax e vmin da bola
+  */

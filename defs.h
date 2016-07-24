@@ -25,15 +25,18 @@
 #define BALL_WIDTH 24
 #define BALL_HEIGHT 24
 #define BALL_ADRESS "./img/ball.png"
-#define BALL_CORRECT 2 /* Diminuir o índice de colisões com a quina */
-#define BALL_MOVE_PRECISION 100 /*Determinar uma escala de precisão para o movimento */
+#define BALL_INIT_SPEED_X 6.5
+#define BALL_INIT_SPEED_Y 4.5
+#define BALL_MAX_SPEED_X 7.0
+#define BALL_MIN_SPEED_X 5.5
+#define BALL_CORRECT 2 /* Diminuir o ínidice de colisões com a quina */
 
 //PAD constants
 #define PAD_WIDTH 200
 #define PAD_HEIGHT 44
 #define PAD_ADDRESS "./img/pad.png"
 #define PAD_CORRECT 20 /* Corrigir o tamanho da base superior */
-#define Vmax 5
+#define Vmax 6
 
 //PAD colision constants
 #define PAD_COL_1E_x 20-PAD_WIDTH/2
@@ -58,12 +61,12 @@ typedef struct _BLOCK{
 
 typedef struct _BALL{
 	SDL_Surface* image;
-	int posx, posy; //Relativos ao centro da bola
-	int stepx, stepy;
+ 	double posx, posy; //Relativos ao centro da bola
+ 	double stepx, stepy;
 } BALL;
 
 typedef struct _VETOR{
-	float x, y;
+	double x, y;
 } VETOR;
 
 typedef struct _PAD{

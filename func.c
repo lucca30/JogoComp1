@@ -52,8 +52,8 @@ int createBall(BALL *b, char *address){
 	SDL_SetColorKey(b->image, SDL_TRUE, SDL_MapRGB( (b->image)->format, 0xFF, 0, 0xFF));
 	b->posx = 400;
 	b->posy = 400;
-	b->stepx = -550;
-	b->stepy = -450;
+	b->stepx = BALL_INIT_SPEED_X;
+	b->stepy = BALL_INIT_SPEED_Y;
 	return success;
 }
 
@@ -65,15 +65,15 @@ int moveBall(BALL *b, PAD *p, GAMESTATS *game){
 	srcRct.w = BALL_WIDTH;
 	srcRct.h = BALL_HEIGHT;
 	if(game->moving_ball){
-		b->posx += b->stepx/BALL_MOVE_PRECISION;
-		b->posy += b->stepy/BALL_MOVE_PRECISION;
+		b->posx += b->stepx;
+		b->posy += b->stepy;
 	}
 	else{
 		b->posx = p->posx;
 		b->posy = p->posy - PAD_HEIGHT/2 - BALL_HEIGHT/2 + BALL_CORRECT;
 	}
-	destRct.x = b->posx - BALL_WIDTH/2;
-	destRct.y = b->posy - BALL_HEIGHT/2;
+	destRct.x = (int) b->posx - BALL_WIDTH/2;
+	destRct.y = (int) b->posy - BALL_HEIGHT/2;
 	if(SDL_BlitSurface(b->image, &srcRct, gScreenSurface, &destRct) < 0){
 		printf("SDL could not blit! SDL Error: %s\n", SDL_GetError());
 		success = false;
@@ -101,10 +101,28 @@ void colisao(BALL *b, int mapa[10][9], PAD *p, GAMESTATS *game){
 	int pad_sup_esq = p->posx - PAD_WIDTH/2 + PAD_CORRECT;
 	int pad_sup_dir = p->posx + PAD_WIDTH/2 - PAD_CORRECT;
 	int pad_base_sup = p->posy - PAD_HEIGHT/2 - BALL_HEIGHT/2;
+	double f;
 	//Colisão com a parte superior do pad
 	if(b->posx >= pad_sup_esq &&  b->posx <= pad_sup_dir && b->posy >= pad_base_sup && b->posy <= pad_base_sup + PAD_HEIGHT/2){
 		b->stepy = -MOD(b->stepy);
-		return;
+		if(b->posx > p->posx){
+			f = 1.0 + (b->posx - p->posx)/(PAD_WIDTH*3);
+		}
+		else{
+			f = 1.0 + (p->posx - b->posx)/(PAD_WIDTH*3);
+		}
+		//Com a parte esquerda
+		if(b->posx >= pad_sup_esq && b->posx < p->posx && game->moving_ball){
+			b->stepx *= b->stepx<0?f:1.0/f;
+			corrige(&(b->stepx));
+			return;
+		}
+		//Com a parte direita
+		if(b->posx <= pad_sup_dir && b->posx > p->posx && game->moving_ball){
+			b->stepx *= b->stepx<0?1.0/f:f;
+			corrige(&(b->stepx));
+			return;
+		}
 	}
 	//Colisão com os pontos de colisão do pad
 	if(distancia(b->posx, b->posy,p->posx+PAD_COL_1E_x,p->posy+PAD_COL_1_y) <= BALL_WIDTH/2){
@@ -331,7 +349,7 @@ void aceleratePad(PAD *p){
 		if(p->vetor.x==0){
 			return;
 		}
-		p->vetor.x = (p->vetor.x)>0?(p->vetor.x-1):(p->vetor.x+1);
+		p->vetor.x = (p->vetor.x)>0?(p->vetor.x-0.5):(p->vetor.x+0.5);
 	}
 }
 
@@ -343,20 +361,20 @@ int menuPause(void){
 	SDL_Surface* menuTela = NULL;
 	SDL_Surface* fundo = NULL;
 	SDL_Rect destRct;
-	
+
 	destRct.x = 0;
 	destRct.y = 0;
 	destRct.w = 800;
 	destRct.h = 600;
-	
+
 	int quit = 0;
 	int quitGAME = 0;
 	SDL_Event e;
 	menuTela = SDL_GetWindowSurface( gWindow );
-	
+
 	fundo = loadSurface(FUNDOPAUSE_ADRESS1);
 	//teste se deu certo aqui
-	
+
 	while(!quit){
 		while(SDL_PollEvent(&e) != 0 ){
 				switch(e.type){
@@ -384,7 +402,7 @@ int menuPause(void){
 
 int createBackground(char *adress){
 	int success = true;
-	
+
 	gBackground = loadSurface(adress);
 	if(gBackground==NULL){
 		puts("Imagem do background não foi carregada.");
@@ -392,16 +410,16 @@ int createBackground(char *adress){
 	}
 	return success;
 	}
-	
+
 int blitBackground(void){
 	int success = true;
 	SDL_Rect dstRectBackground;
-	
+
 	dstRectBackground.x = 0;
 	dstRectBackground.y = 0;
 	dstRectBackground.w = 800;
 	dstRectBackground.h = 600;
-	
+
 	if(SDL_BlitSurface(gBackground, NULL, gScreenSurface, &dstRectBackground) < 0){
 		printf("SDL could not blit! SDL Error: %s\n", SDL_GetError());
 		success = false;
@@ -413,7 +431,7 @@ void menuPrincipal(void){
 	SDL_Surface* menuTela = NULL;
 	SDL_Surface* fundo = NULL;
 	SDL_Surface* botao1 = NULL;
-	
+
 	//Loading Surfaces
 	fundo = loadSurface(TELAINICIAL_ADRESS1);
 	if(fundo==NULL){
@@ -424,27 +442,27 @@ void menuPrincipal(void){
 		puts("Imagem da Botao1 não foi carregada.");
 	}
 	SDL_SetColorKey(botao1, SDL_TRUE, SDL_MapRGB( (botao1)->format, 0xFF, 0, 0xFF));
-	
+
 	//Rect da Imagem Principal
 	SDL_Rect dstImgPr;
 	dstImgPr.x = 0;
 	dstImgPr.y = 0;
 	dstImgPr.w = 800;
 	dstImgPr.h = 600;
-	
+
 	//Rect do botao1
 	SDL_Rect dstButt1;
 	dstButt1.x = 400 - 334/2 ;
 	dstButt1.y = 350;
 	dstButt1.w = 334;
 	dstButt1.h = 80;
-	
+
 	int quit = 0;
 	SDL_Event event;
 	menuTela = SDL_GetWindowSurface( gWindow );
 	//Guarda qual opcao de botao foi acionada
 	int opcaoSelecionada = 1;
-	
+
 	while(!quit){
 		while(SDL_PollEvent(&event) != 0 ){
 				switch(event.type){
@@ -465,3 +483,26 @@ void menuPrincipal(void){
 		SDL_Delay(1000/FPS);
 		}
 	}
+
+void corrige(double *stepx){
+	double corrigido;
+	double modulo = *stepx;
+	if(*stepx < 0.0){
+		modulo = -(*stepx);
+	}
+	if(modulo >BALL_MAX_SPEED_X){
+		corrigido = BALL_MAX_SPEED_X;
+	}
+	else if(modulo < BALL_MIN_SPEED_X){
+		corrigido = BALL_MIN_SPEED_X;
+	}
+	else{
+		corrigido = modulo;
+	}
+	if(*stepx>0){
+		*stepx = corrigido;
+	}
+	else{
+		*stepx = -corrigido;
+	}
+}
