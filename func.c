@@ -37,21 +37,21 @@ int createBlock(BLOCK *b){
 		puts("Imagem do bloco não foi carregada.");
 	}
 	pushTrash(b[0].image);
-	SDL_SetColorKey(b->image, SDL_TRUE, SDL_MapRGB( (b->image)->format, 0xFF, 0, 0xFF));
+	SDL_SetColorKey(b[0].image, SDL_TRUE, SDL_MapRGB( (b[0].image)->format, 0xFF, 0, 0xFF));
 	b[1].image = loadSurface(BLOCK_ADDRESS2);
 	if(b->image==NULL){
 		success = false;
 		puts("Imagem do bloco não foi carregada.");
 	}
 	pushTrash(b[1].image);
-	SDL_SetColorKey(b->image, SDL_TRUE, SDL_MapRGB( (b->image)->format, 0xFF, 0, 0xFF));
+	SDL_SetColorKey(b[1].image, SDL_TRUE, SDL_MapRGB( (b[1].image)->format, 0xFF, 0, 0xFF));
 	b[2].image = loadSurface(BLOCK_ADDRESS3);
 	if(b->image==NULL){
 		success = false;
 		puts("Imagem do bloco não foi carregada.");
 	}
 	pushTrash(b[2].image);
-	SDL_SetColorKey(b->image, SDL_TRUE, SDL_MapRGB( (b->image)->format, 0xFF, 0, 0xFF));
+	SDL_SetColorKey(b[2].image, SDL_TRUE, SDL_MapRGB( (b[2].image)->format, 0xFF, 0, 0xFF));
 
 	return success;
 }
@@ -397,7 +397,6 @@ int menuPause(void){
 						break;
 					case SDL_KEYDOWN:
 						switch(e.key.keysym.sym){
-							printf("merda\n");
 							case SDLK_ESCAPE:
 								quit = 1;
 								break;
@@ -432,11 +431,13 @@ int blitBackground(void){
 	dstRectBackground.y = 0;
 	dstRectBackground.w = 800;
 	dstRectBackground.h = 600;
-
+	
+	
 	if(SDL_BlitSurface(gBackground, NULL, gScreenSurface, &dstRectBackground) < 0){
 		printf("SDL could not blit! SDL Error: %s\n", SDL_GetError());
 		success = false;
 	}
+	
 	return success;
 	}
 

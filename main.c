@@ -63,7 +63,7 @@ int main(int argc, char* args[]){
 			}
 
 			aceleratePad(&Pad);
-			SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0xFF, 0xFF, 0xFF));
+			SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0, 0, 0));
 
 			if (!blitBackground()){
 				quit = false;

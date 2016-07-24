@@ -13,7 +13,7 @@
 #define BLOCK_WIDTH 80
 #define BLOCK_HEIGHT 30
 #define BLOCK_ADDRESS1 "./img/block1.png"
-#define BLOCK_ADDRESS2 "./img/bloco2.png"
+#define BLOCK_ADDRESS2 "./img/block2.png"
 #define BLOCK_ADDRESS3 "./img/bloco3.png"
 
 //BACKGROUND constants
