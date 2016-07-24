@@ -81,6 +81,12 @@ typedef struct _GAMESTATS{
 	int moving_ball;
 } GAMESTATS;
 
+typedef struct _PLAYERSTATS{
+	char playerName[5];
+	int score;
+	int lives;
+} PLAYERSTATS;
+
 typedef struct _LIXO{
 	SDL_Surface *image[20];
 	int topo;

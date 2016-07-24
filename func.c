@@ -96,8 +96,9 @@ int moveBall(BALL *b, PAD *p, GAMESTATS *game){
 	return success;
 }
 
-void colisao(BALL *b, int mapa[10][9], PAD *p, GAMESTATS *game){
+void colisao(BALL *b, int mapa[10][9], PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 	int i, j;
+
 	//Colisão com as laterais das paredes
 	if(b->posx >= SCREEN_WIDTH - BALL_WIDTH/2 - BLOCK_WIDTH/2 || b->posx <= BALL_WIDTH/2 + BLOCK_WIDTH/2){
 		b->stepx = -(b->stepx);
@@ -108,8 +109,10 @@ void colisao(BALL *b, int mapa[10][9], PAD *p, GAMESTATS *game){
 		b->stepy = MOD(b->stepy);
 		return;
 	}
+	//Colisão com o fundo
 	if(b->posy >= SCREEN_HEIGHT - BALL_HEIGHT/2 ){
 		game->moving_ball = false;
+		player->lives--; printf("lives %d\n", player->lives);
 		return;
 	}
 	int pad_sup_esq = p->posx - PAD_WIDTH/2 + PAD_CORRECT;
@@ -189,12 +192,14 @@ void colisao(BALL *b, int mapa[10][9], PAD *p, GAMESTATS *game){
 					if(b->posx >= j*BLOCK_WIDTH - BALL_WIDTH/2 + BLOCK_WIDTH/2 && b->posx <= j*BLOCK_WIDTH + BLOCK_WIDTH){
 						mapa[i][j]--;;
 						b->stepx = -MOD(b->stepx);
+						player->score+=100; printf("score %d\n", player->score);
 						return;
 					}
 					//Colisão com a parte direita do bloco
 					if(b->posx <= (j+1)*BLOCK_WIDTH + BALL_WIDTH/2 +BLOCK_WIDTH/2 && b->posx >= (j+1)*BLOCK_WIDTH){
 						mapa[i][j]--;
 						b->stepx = MOD(b->stepx);
+						player->score+=100; printf("score %d\n", player->score);
 						return;
 					}
 				}
@@ -203,12 +208,14 @@ void colisao(BALL *b, int mapa[10][9], PAD *p, GAMESTATS *game){
 					if(b->posy >= i*BLOCK_HEIGHT - BALL_HEIGHT/2 && b->posy <= i*BLOCK_HEIGHT ){
 						mapa[i][j]--;
 						b->stepy = -MOD(b->stepy);
+						player->score+=100; printf("score %d\n", player->score);
 						return;
 					}
 					//Colisão com a parte inferior do bloco
 					if(b->posy <= (i+1)*BLOCK_HEIGHT + BALL_HEIGHT/2 && b->posy >= (i+1)*BLOCK_HEIGHT ){
 						mapa[i][j]--;
 						b->stepy = MOD(b->stepy);
+						player->score+=100; printf("score %d\n", player->score);
 						return;
 					}
 				}
@@ -216,24 +223,28 @@ void colisao(BALL *b, int mapa[10][9], PAD *p, GAMESTATS *game){
 					mapa[i][j]--;
 					b->stepx = -MOD(b->stepx);
 					b->stepy = -MOD(b->stepy);
+					player->score+=100; printf("score %d\n", player->score);
 					return;
 				}
 				if(distancia(b->posx, b->posy, (j+1)*BLOCK_WIDTH + BLOCK_WIDTH/2, i*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
 					mapa[i][j]--;
 					b->stepx = MOD(b->stepx);
 					b->stepy = -MOD(b->stepy);
+					player->score+=100; printf("score %d\n", player->score);
 					return;
 				}
 				if(distancia(b->posx, b->posy, j*BLOCK_WIDTH + BLOCK_WIDTH/2, (i+1)*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
 					mapa[i][j]--;
 					b->stepx = -MOD(b->stepx);
 					b->stepy = MOD(b->stepy);
+					player->score+=100; printf("score %d\n", player->score);
 					return;
 				}
 				if(distancia(b->posx, b->posy, (j+1)*BLOCK_WIDTH + BLOCK_WIDTH/2, (i+1)*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
 					mapa[i][j]--;
 					b->stepx = MOD(b->stepx);
 					b->stepy = MOD(b->stepy);
+					player->score+=100; printf("score %d\n", player->score);
 					return;
 				}
 			}
@@ -431,13 +442,13 @@ int blitBackground(void){
 	dstRectBackground.y = 0;
 	dstRectBackground.w = 800;
 	dstRectBackground.h = 600;
-	
-	
+
+
 	if(SDL_BlitSurface(gBackground, NULL, gScreenSurface, &dstRectBackground) < 0){
 		printf("SDL could not blit! SDL Error: %s\n", SDL_GetError());
 		success = false;
 	}
-	
+
 	return success;
 	}
 
@@ -523,4 +534,48 @@ void corrige(double *stepx){
 
 void pushTrash(SDL_Surface *surf){
 	trash.image[trash.topo++] = surf;
+}
+
+void sortRank(PLAYERSTATS *player){
+	FILE *file1;
+	int i, j;
+	PLAYERSTATS lidos[11];
+	/*
+	 * Aqui abre-se o arquivo binário para leitura e ordenação, colocando o
+	 * jogador atual no final do mesmo.
+	 */
+	file1 = fopen("ranking.bin", "r");
+	if(!file1) puts("Erro ao abrir ranking");
+	fread(lidos, sizeof(PLAYERSTATS), 10, file1);
+	lidos[10] = *player;
+	fclose(file1);
+	/*
+	 * Aqui realiza-se o ordenamento desse vetor.
+	 */
+	for(i = 0; i < 11-1; i++){
+        for(j = 0; j < 11-(1+i); j++){
+            if(compare(&(lidos[j]), &(lidos[j+1])) < 0 ){
+                PLAYERSTATS temp = lidos[j];
+                lidos[j] = lidos[j+1];
+                lidos[j+1] = temp;
+            }
+        }
+    }
+	/*
+	 * Aqui os arquivos são retornados ao arquivo binário.
+	 */
+	file1 = fopen("ranking.bin", "w");
+	if(!file1) puts("Erro ao abrir ranking");
+	fwrite(lidos, sizeof(PLAYERSTATS), 10, file1);
+	fclose(file1);
+	return;
+}
+
+/*
+ * Função usada na sortRank, compara dois elementos PLAYERSTATS.
+ */
+int compare(PLAYERSTATS *a, PLAYERSTATS *b){
+	if(a->score < b->score) return -1;
+	else if(a->score > b->score) return 0;
+	else return 0;
 }

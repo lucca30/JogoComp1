@@ -26,7 +26,7 @@ int moveBall(BALL *b, PAD *p, GAMESTATS *game);
  *  Responsável por "Blitar" movimento da bola, através do stepx e stepy
  * atribuídos a ela
  */
-void colisao(BALL *b, int mapa[10][9], PAD *p, GAMESTATS *game);
+void colisao(BALL *b, int mapa[10][9], PAD *p, GAMESTATS *game, PLAYERSTATS *player);
 /*
  * Versão Beta1.5:
  * Identifica colisão com a extremidade da tela
@@ -62,7 +62,7 @@ int createBackground(char *adress);
 int blitBackground(void);
 /*
  * Imprime Background
- * */
+ */
 
 void menuPrincipal(void);
 /*
@@ -75,4 +75,12 @@ void menuPrincipal(void);
 void pushTrash(SDL_Surface *surf);
 /*
  * Adiciona a superficie ao vetor lixeira
+ */
+void sortRank(PLAYERSTATS *player);
+/*
+ * Ordena os melhores jogadores por pontuação
+ */
+int compare(PLAYERSTATS *a, PLAYERSTATS *b);
+/*
+ * Usada na sortRank
  */

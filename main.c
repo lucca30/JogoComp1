@@ -24,8 +24,18 @@ int main(int argc, char* args[]){
 	BLOCK Blocks[3];
 	BALL Ball;
 	PAD Pad;
-	GAMESTATS Player1;
-	Player1.moving_ball = false;
+	GAMESTATS Game;
+	PLAYERSTATS Player;
+	Game.moving_ball = false;
+
+	Player.score = 0;
+	Player.lives = 3;
+	/*
+	 * Esse incremento conta quantas vidas extras serão conferidas ao jogador
+	 * a cada mil pontos.
+	 */
+	int incremento = 0;
+
 	trash.topo = 0;
 
 
@@ -55,7 +65,7 @@ int main(int argc, char* args[]){
 								quit = true;
 								break;
 							case SDLK_SPACE:
-								Player1.moving_ball = true;
+								Game.moving_ball = true;
 								break;
 						}
 						break;
@@ -69,11 +79,11 @@ int main(int argc, char* args[]){
 				quit = false;
 				puts("Problemas ao imprimir o fundo.\n");
 				}
-			if(!moveBall(&Ball, &Pad, &Player1)){
+			if(!moveBall(&Ball, &Pad, &Game)){
 				quit = false;
 				puts("Problemas ao imprimir a bola.\n");
 			}
-			colisao(&Ball, Mapa1, &Pad, &Player1);
+			colisao(&Ball, Mapa1, &Pad, &Game, &Player);
 			if(!imprimeMapa(Mapa1, Blocks)){
 				quit = false;
 				puts("Problemas ao imprimir um bloco.\n");
@@ -83,11 +93,30 @@ int main(int argc, char* args[]){
 				puts("Problemas ao imprimir o pad.\n");
 				}
 
+			/*
+			 * Essa série de ifs verifica as vidas extras, as vidas,
+			 * e ordena as pontuações até então..
+			 */
+			if(Player.score%1000 != 0) {
+				incremento = 1;
+			}
+			if(Player.score%1000 == 0 && Player.score!=0 && incremento) {
+				incremento = 0;
+				Player.lives++;
+				printf("vidas %d\n", Player.lives);
+			}
+			if(Player.lives < 0){
+				sortRank(&Player);
+				//Aqui tem que abrir uma tela de gameover/continue.
+				Player.lives = 3;
+				Player.score = 0;
+			}
+
+
 			SDL_UpdateWindowSurface(gWindow);
 			SDL_Delay(1000/FPS);
 		}
 	}
-
 
 	closing();
 
