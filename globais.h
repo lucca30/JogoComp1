@@ -9,14 +9,8 @@ extern SDL_Window* gWindow;
 extern SDL_Surface* gScreenSurface;
 extern SDL_Surface* gBackground;
 
-extern BLOCK gBlock1;
-
-extern BALL gBall;
-
 extern int Mapa1[10][9];
 
-extern PAD gPad;
-
-extern GAMESTATS gPlayer1;
+extern LIXO trash;
 
 #endif

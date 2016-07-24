@@ -21,18 +21,23 @@
 int main(int argc, char* args[]){
 	int quit = false;
 	SDL_Event e;
-	gPlayer1.moving_ball = false;
-	
-	
-	
+	BLOCK Blocks[3];
+	BALL Ball;
+	PAD Pad;
+	GAMESTATS Player1;
+	Player1.moving_ball = false;
+	trash.topo = 0;
+
+
+
 	if(!init()){
   		printf("Failed to initialize!\n");
   	}
 	else {
-		
+
 		menuPrincipal();
-		
-		if(!createBlock(&gBlock1, BLOCK_ADDRESS1) || !createBall(&gBall, BALL_ADRESS) || !createPad(&gPad, PAD_ADDRESS) || !createBackground(BACKGROUND_ADRESS1) ){
+
+		if(!createBlock(Blocks) || !createBall(&Ball) || !createPad(&Pad) || !createBackground(BACKGROUND_ADDRESS1) ){
 			quit=false;
 		}
 		while(!quit){
@@ -50,34 +55,34 @@ int main(int argc, char* args[]){
 								quit = true;
 								break;
 							case SDLK_SPACE:
-								gPlayer1.moving_ball = true;
+								Player1.moving_ball = true;
 								break;
 						}
 						break;
 				}
 			}
-			
-			aceleratePad(&gPad);
+
+			aceleratePad(&Pad);
 			SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0xFF, 0xFF, 0xFF));
-			
+
 			if (!blitBackground()){
 				quit = false;
 				puts("Problemas ao imprimir o fundo.\n");
 				}
-			if(!moveBall(&gBall, &gPad, &gPlayer1)){
+			if(!moveBall(&Ball, &Pad, &Player1)){
 				quit = false;
 				puts("Problemas ao imprimir a bola.\n");
 			}
-			colisao(&gBall, Mapa1, &gPad, &gPlayer1);
-			if(!imprimeMapa(Mapa1)){
+			colisao(&Ball, Mapa1, &Pad, &Player1);
+			if(!imprimeMapa(Mapa1, Blocks)){
 				quit = false;
 				puts("Problemas ao imprimir um bloco.\n");
 			}
-			if(!movePad(&gPad)){
+			if(!movePad(&Pad)){
 				quit = false;
 				puts("Problemas ao imprimir o pad.\n");
 				}
-				
+
 			SDL_UpdateWindowSurface(gWindow);
 			SDL_Delay(1000/FPS);
 		}

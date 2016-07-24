@@ -6,7 +6,7 @@
 #include "globais.h"
 #include "func.h"
 
-int imprimeMapa(int mapa[10][9]){
+int imprimeMapa(int mapa[10][9], BLOCK *b){
 	int i, j;
 	int success = true;
 	SDL_Rect srcRct, destRct;
@@ -16,35 +16,49 @@ int imprimeMapa(int mapa[10][9]){
 	srcRct.h = BLOCK_HEIGHT;
 	for(i=0;i<10;i++){
 		for(j=0;j<9;j++){
-			switch (mapa[i][j]) {
-				case 1:
-					destRct.x=j*BLOCK_WIDTH + BLOCK_WIDTH/2;
-					destRct.y=i*BLOCK_HEIGHT;
-					if(SDL_BlitSurface(gBlock1.image, &srcRct, gScreenSurface, &destRct) < 0){
-						printf("SDL could not blit! SDL Error: %s\n", SDL_GetError());
-						success = false;
-					}
-					break;
+			if(mapa[i][j]!=0) {
+				destRct.x=j*BLOCK_WIDTH + BLOCK_WIDTH/2;
+				destRct.y=i*BLOCK_HEIGHT;
+				if(SDL_BlitSurface(b[mapa[i][j]-1].image, &srcRct, gScreenSurface, &destRct) < 0){
+					printf("SDL could not blit! SDL Error: %s\n", SDL_GetError());
+					success = false;
+				}
 			}
 		}
 	}
 	return success;
 }
 
-int createBlock(BLOCK *b, char *address){
+int createBlock(BLOCK *b){
 	int success = true;
-	b->image = loadSurface(address);
+	b[0].image = loadSurface(BLOCK_ADDRESS1);
 	if(b->image==NULL){
 		success = false;
 		puts("Imagem do bloco não foi carregada.");
 	}
+	pushTrash(b[0].image);
 	SDL_SetColorKey(b->image, SDL_TRUE, SDL_MapRGB( (b->image)->format, 0xFF, 0, 0xFF));
+	b[1].image = loadSurface(BLOCK_ADDRESS2);
+	if(b->image==NULL){
+		success = false;
+		puts("Imagem do bloco não foi carregada.");
+	}
+	pushTrash(b[1].image);
+	SDL_SetColorKey(b->image, SDL_TRUE, SDL_MapRGB( (b->image)->format, 0xFF, 0, 0xFF));
+	b[2].image = loadSurface(BLOCK_ADDRESS3);
+	if(b->image==NULL){
+		success = false;
+		puts("Imagem do bloco não foi carregada.");
+	}
+	pushTrash(b[2].image);
+	SDL_SetColorKey(b->image, SDL_TRUE, SDL_MapRGB( (b->image)->format, 0xFF, 0, 0xFF));
+
 	return success;
 }
 
-int createBall(BALL *b, char *address){
+int createBall(BALL *b){
 	int success = true;
-	b->image = loadSurface(address);
+	b->image = loadSurface(BALL_ADDRESS);
 	if(b->image==NULL){
 		success = false;
 		puts("Imagem da bola não foi carregada.");
@@ -173,13 +187,13 @@ void colisao(BALL *b, int mapa[10][9], PAD *p, GAMESTATS *game){
 				if(b->posy > (i)*BLOCK_HEIGHT && b->posy < (i+1)*BLOCK_HEIGHT){
 					//Colisão com a parte esquerda do bloco
 					if(b->posx >= j*BLOCK_WIDTH - BALL_WIDTH/2 + BLOCK_WIDTH/2 && b->posx <= j*BLOCK_WIDTH + BLOCK_WIDTH){
-						mapa[i][j]=0;
+						mapa[i][j]--;;
 						b->stepx = -MOD(b->stepx);
 						return;
 					}
 					//Colisão com a parte direita do bloco
 					if(b->posx <= (j+1)*BLOCK_WIDTH + BALL_WIDTH/2 +BLOCK_WIDTH/2 && b->posx >= (j+1)*BLOCK_WIDTH){
-						mapa[i][j]=0;
+						mapa[i][j]--;
 						b->stepx = MOD(b->stepx);
 						return;
 					}
@@ -187,37 +201,37 @@ void colisao(BALL *b, int mapa[10][9], PAD *p, GAMESTATS *game){
 				//Colisão com parte superior do bloco
 				if(b->posx > j*BLOCK_WIDTH + BLOCK_WIDTH/2 && b->posx < (j+1)*BLOCK_WIDTH + BLOCK_WIDTH/2){
 					if(b->posy >= i*BLOCK_HEIGHT - BALL_HEIGHT/2 && b->posy <= i*BLOCK_HEIGHT ){
-						mapa[i][j]=0;
+						mapa[i][j]--;
 						b->stepy = -MOD(b->stepy);
 						return;
 					}
 					//Colisão com a parte inferior do bloco
 					if(b->posy <= (i+1)*BLOCK_HEIGHT + BALL_HEIGHT/2 && b->posy >= (i+1)*BLOCK_HEIGHT ){
-						mapa[i][j]=0;
+						mapa[i][j]--;
 						b->stepy = MOD(b->stepy);
 						return;
 					}
 				}
 				if(distancia(b->posx, b->posy, j*BLOCK_WIDTH + BLOCK_WIDTH/2, i*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
-					mapa[i][j] = 0;
+					mapa[i][j]--;
 					b->stepx = -MOD(b->stepx);
 					b->stepy = -MOD(b->stepy);
 					return;
 				}
 				if(distancia(b->posx, b->posy, (j+1)*BLOCK_WIDTH + BLOCK_WIDTH/2, i*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
-					mapa[i][j] = 0;
+					mapa[i][j]--;
 					b->stepx = MOD(b->stepx);
 					b->stepy = -MOD(b->stepy);
 					return;
 				}
 				if(distancia(b->posx, b->posy, j*BLOCK_WIDTH + BLOCK_WIDTH/2, (i+1)*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
-					mapa[i][j] = 0;
+					mapa[i][j]--;
 					b->stepx = -MOD(b->stepx);
 					b->stepy = MOD(b->stepy);
 					return;
 				}
 				if(distancia(b->posx, b->posy, (j+1)*BLOCK_WIDTH + BLOCK_WIDTH/2, (i+1)*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
-					mapa[i][j] = 0;
+					mapa[i][j]--;
 					b->stepx = MOD(b->stepx);
 					b->stepy = MOD(b->stepy);
 					return;
@@ -262,12 +276,11 @@ void closing(){
 		//Libera o espaço dos elementos globais
     SDL_FreeSurface(gScreenSurface);
     gScreenSurface = NULL;
-
-		SDL_FreeSurface(gBlock1.image);
-		gBlock1.image = NULL;
-
-		SDL_FreeSurface(gBall.image);
-		gBall.image = NULL;
+		int i;
+		for(i=0;i<trash.topo;i++){
+			SDL_FreeSurface(trash.image[i]);
+			trash.image[i] = NULL;
+		}
 
     SDL_DestroyWindow(gWindow);
     gWindow = NULL;
@@ -296,9 +309,9 @@ SDL_Surface* loadSurface(char *address){
     return optimizedSurface;
 }
 
-int createPad(PAD *p, char *address){
+int createPad(PAD *p){
 	int success = true;
-	p->image = loadSurface(address);
+	p->image = loadSurface(PAD_ADDRESS);
 	if(p->image==NULL){
 		success = false;
 		puts("Imagem do pad não foi carregada.");
@@ -372,7 +385,7 @@ int menuPause(void){
 	SDL_Event e;
 	menuTela = SDL_GetWindowSurface( gWindow );
 
-	fundo = loadSurface(FUNDOPAUSE_ADRESS1);
+	fundo = loadSurface(FUNDOPAUSE_ADDRESS1);
 	//teste se deu certo aqui
 
 	while(!quit){
@@ -400,10 +413,10 @@ int menuPause(void){
 	return quitGAME;
 	}
 
-int createBackground(char *adress){
+int createBackground(char *address){
 	int success = true;
 
-	gBackground = loadSurface(adress);
+	gBackground = loadSurface(address);
 	if(gBackground==NULL){
 		puts("Imagem do background não foi carregada.");
 		success = false;
@@ -433,11 +446,11 @@ void menuPrincipal(void){
 	SDL_Surface* botao1 = NULL;
 
 	//Loading Surfaces
-	fundo = loadSurface(TELAINICIAL_ADRESS1);
+	fundo = loadSurface(TELAINICIAL_ADDRESS1);
 	if(fundo==NULL){
 		puts("Imagem da Tela Pr não foi carregada.");
 	}
-	botao1 = loadSurface(BUTTON1_ADRESS1);
+	botao1 = loadSurface(BUTTON1_ADDRESS1);
 	if(botao1==NULL){
 		puts("Imagem da Botao1 não foi carregada.");
 	}
@@ -505,4 +518,8 @@ void corrige(double *stepx){
 	else{
 		*stepx = -corrigido;
 	}
+}
+
+void pushTrash(SDL_Surface *surf){
+	trash.image[trash.topo++] = surf;
 }

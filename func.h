@@ -8,16 +8,16 @@ SDL_Surface* loadSurface(char *address);
  * Retorna o endereço de uma superfície com a imagem desejada carregada,
  * Permite não usar variáveis globais pra supefícies dos sprites
  */
-int imprimeMapa(int mapa[10][9]);
+int imprimeMapa(int mapa[10][9], BLOCK *b);
 /*
  *  Interpreta a Projeção dos Blocos em formato de matriz e
  * faz o BLit na Tela
  */
-int createBlock(BLOCK *b, char *address);
+int createBlock(BLOCK *b);
 /*
  * Realiza uma atribuição básica dos elementos que o compoem (imagem)
  */
-int createBall(BALL *b, char *address);
+int createBall(BALL *b);
 /*
  * Realiza uma atribuição aos elementos que a compoem
  */
@@ -33,7 +33,7 @@ void colisao(BALL *b, int mapa[10][9], PAD *p, GAMESTATS *game);
  * Identifica colisão com os blocos
  * Identifica colisão com o PAD, na sua parte superior, quinas e laterais
  */
-int createPad(PAD *p, char *address);
+int createPad(PAD *p);
 /*
  * Define os atributos do pad.
  */
@@ -72,3 +72,7 @@ void menuPrincipal(void);
  /*
   * Ajuste para vmax e vmin da bola
   */
+void pushTrash(SDL_Surface *surf);
+/*
+ * Adiciona a superficie ao vetor lixeira
+ */

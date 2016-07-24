@@ -13,18 +13,20 @@
 #define BLOCK_WIDTH 80
 #define BLOCK_HEIGHT 30
 #define BLOCK_ADDRESS1 "./img/block1.png"
+#define BLOCK_ADDRESS2 "./img/bloco2.png"
+#define BLOCK_ADDRESS3 "./img/bloco3.png"
 
 //BACKGROUND constants
-#define BACKGROUND_ADRESS1 "./img/teste.png"
-#define TELAINICIAL_ADRESS1 "./img/telapr.png"
-#define FUNDOPAUSE_ADRESS1 "./img/telapause.png"
+#define BACKGROUND_ADDRESS1 "./img/teste.png"
+#define TELAINICIAL_ADDRESS1 "./img/telapr.png"
+#define FUNDOPAUSE_ADDRESS1 "./img/telapause.png"
 
-#define BUTTON1_ADRESS1 "./img/button1.png"
+#define BUTTON1_ADDRESS1 "./img/button1.png"
 
 //BALL constants
 #define BALL_WIDTH 24
 #define BALL_HEIGHT 24
-#define BALL_ADRESS "./img/ball.png"
+#define BALL_ADDRESS "./img/ball.png"
 #define BALL_INIT_SPEED_X 6.5
 #define BALL_INIT_SPEED_Y 4.5
 #define BALL_MAX_SPEED_X 7.0
@@ -78,5 +80,10 @@ typedef struct _PAD{
 typedef struct _GAMESTATS{
 	int moving_ball;
 } GAMESTATS;
+
+typedef struct _LIXO{
+	SDL_Surface *image[20];
+	int topo;
+} LIXO;
 
 #endif
