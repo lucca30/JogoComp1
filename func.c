@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include <math.h>
 #include "defs.h"
 #include "globais.h"
@@ -98,9 +99,7 @@ int moveBall(BALL *b, PAD *p, GAMESTATS *game){
 
 void colisao(BALL *b, PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 	int i, j;
-
-
-
+	
 	//Colisão com as laterais das paredes
 	if(b->posx >= SCREEN_WIDTH - BALL_WIDTH/2 - BLOCK_WIDTH/2 || b->posx <= BALL_WIDTH/2 + BLOCK_WIDTH/2){
 		b->stepx = -(b->stepx);
@@ -114,7 +113,7 @@ void colisao(BALL *b, PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 	//Colisão com o fundo
 	if(b->posy >= SCREEN_HEIGHT - BALL_HEIGHT/2 ){
 		game->moving_ball = false;
-		player->lives--; printf("lives %d\n", player->lives);
+		player->lives--;
 		return;
 	}
 	int pad_sup_esq = p->posx - PAD_WIDTH/2 + PAD_CORRECT;
@@ -194,14 +193,14 @@ void colisao(BALL *b, PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 					if(b->posx >= j*BLOCK_WIDTH - BALL_WIDTH/2 + BLOCK_WIDTH/2 && b->posx <= j*BLOCK_WIDTH + BLOCK_WIDTH){
 						game->mapa[i][j]--;;
 						b->stepx = -MOD(b->stepx);
-						player->score+=100; printf("score %d\n", player->score);
+						player->score+=100;
 						return;
 					}
 					//Colisão com a parte direita do bloco
 					if(b->posx <= (j+1)*BLOCK_WIDTH + BALL_WIDTH/2 +BLOCK_WIDTH/2 && b->posx >= (j+1)*BLOCK_WIDTH){
 						game->mapa[i][j]--;
 						b->stepx = MOD(b->stepx);
-						player->score+=100; printf("score %d\n", player->score);
+						player->score+=100;
 						return;
 					}
 				}
@@ -210,14 +209,14 @@ void colisao(BALL *b, PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 					if(b->posy >= i*BLOCK_HEIGHT - BALL_HEIGHT/2 && b->posy <= i*BLOCK_HEIGHT ){
 						game->mapa[i][j]--;
 						b->stepy = -MOD(b->stepy);
-						player->score+=100; printf("score %d\n", player->score);
+						player->score+=100;
 						return;
 					}
 					//Colisão com a parte inferior do bloco
 					if(b->posy <= (i+1)*BLOCK_HEIGHT + BALL_HEIGHT/2 && b->posy >= (i+1)*BLOCK_HEIGHT ){
 						game->mapa[i][j]--;
 						b->stepy = MOD(b->stepy);
-						player->score+=100; printf("score %d\n", player->score);
+						player->score+=100;
 						return;
 					}
 				}
@@ -225,28 +224,28 @@ void colisao(BALL *b, PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 					game->mapa[i][j]--;
 					b->stepx = -MOD(b->stepx);
 					b->stepy = -MOD(b->stepy);
-					player->score+=100; printf("score %d\n", player->score);
+					player->score+=100;
 					return;
 				}
 				if(distancia(b->posx, b->posy, (j+1)*BLOCK_WIDTH + BLOCK_WIDTH/2, i*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
 					game->mapa[i][j]--;
 					b->stepx = MOD(b->stepx);
 					b->stepy = -MOD(b->stepy);
-					player->score+=100; printf("score %d\n", player->score);
+					player->score+=100;
 					return;
 				}
 				if(distancia(b->posx, b->posy, j*BLOCK_WIDTH + BLOCK_WIDTH/2, (i+1)*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
 					game->mapa[i][j]--;
 					b->stepx = -MOD(b->stepx);
 					b->stepy = MOD(b->stepy);
-					player->score+=100; printf("score %d\n", player->score);
+					player->score+=100;
 					return;
 				}
 				if(distancia(b->posx, b->posy, (j+1)*BLOCK_WIDTH + BLOCK_WIDTH/2, (i+1)*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
 					game->mapa[i][j]--;
 					b->stepx = MOD(b->stepx);
 					b->stepy = MOD(b->stepy);
-					player->score+=100; printf("score %d\n", player->score);
+					player->score+=100;
 					return;
 				}
 			}
@@ -261,6 +260,10 @@ int init(){
         printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
         success = false;
     }
+    if (TTF_Init() == -1){
+		printf("SDL could not initialize TTF! SDL Error: %s\n", SDL_GetError());
+        success = false;
+		}
     else{
         gWindow = SDL_CreateWindow("Ultimate Neotron HD PLUS PREMIUM", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
         if(gWindow == NULL)
@@ -301,6 +304,7 @@ void closing(){
 		//Fecha o SDL
     IMG_Quit();
     SDL_Quit();
+    TTF_Quit();
 }
 
 SDL_Surface* loadSurface(char *address){
@@ -594,13 +598,12 @@ void loadLevel(GAMESTATS *game){
 }
 
 void updatePlayer(PLAYERSTATS *Player, GAMESTATS *game){
-	if(Player->score%1000 != 0) {
+	if(Player->score%10000 != 0) {
 		Player->incremento = 1;
 	}
-	if(Player->score%1000 == 0 && Player->score!=0 && Player->incremento) {
+	if(Player->score%10000 == 0 && Player->score!=0 && Player->incremento) {
 		Player->incremento = 0;
 		Player->lives++;
-		printf("vidas %d\n", Player->lives);
 	}
 	if(Player->lives < 0){
 		sortRank(Player);
@@ -614,3 +617,34 @@ void updatePlayer(PLAYERSTATS *Player, GAMESTATS *game){
 		loadLevel(game);
 	}
 }
+
+TTF_Font* preparaFonte(char* arquivoFonte, int size){
+	TTF_Font* fonte;
+	fonte = TTF_OpenFont(arquivoFonte, size);
+	return fonte;
+	}
+
+//TTF FODA-SE EDITION
+SDL_Surface* createSurfaceTTF(char* texto,TTF_Font* fonte,int colorR,int colorG,int colorB){
+	SDL_Color cor = {colorR, colorG, colorB};
+	SDL_Surface* superficieTexto = TTF_RenderText_Blended(fonte, texto, cor);
+	return superficieTexto;
+}
+
+void printPlayerStats(PLAYERSTATS player, TTF_Font* fonteScore){
+	char stringTemp[50];
+	
+	SDL_Surface* scoreSuperficie;
+	SDL_Rect rectTemp;
+	rectTemp.x = 50;
+	rectTemp.y = 0;
+	rectTemp.w = 0;
+	rectTemp.h = 0;
+	
+	sprintf(stringTemp,"Score: %5d Vidas: %d",player.score, player.lives);
+	scoreSuperficie = createSurfaceTTF(stringTemp,fonteScore,255,255,255);
+	
+	SDL_BlitSurface(scoreSuperficie, NULL, gScreenSurface, &rectTemp);
+	
+	
+	}

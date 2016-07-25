@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include <math.h>
 #include "defs.h"
 #include "globais.h"
@@ -30,10 +31,7 @@ int main(int argc, char* args[]){
 	Player.score = 0;
 	Player.lives = 3;
 	Player.incremento = 0;
-	/*
-	 * Esse incremento conta quantas vidas extras serão conferidas ao jogador
-	 * a cada mil pontos.
-	 */
+	TTF_Font* fonteScore;	
 
 	trash.topo = 0;
 	if(!init()){
@@ -46,6 +44,10 @@ int main(int argc, char* args[]){
 		if(!createBlock(Blocks) || !createBall(&Ball) || !createPad(&Pad) || !createBackground(BACKGROUND_ADDRESS1) ){
 			quit=false;
 		}
+		//Sessão Temporária do TTF-niichan
+		fonteScore = preparaFonte("fonteScore.ttf", 35);
+		
+		
 		while(!quit){
 			while(SDL_PollEvent(&e) != 0 ){
 				switch(e.type){
@@ -70,7 +72,8 @@ int main(int argc, char* args[]){
 
 			aceleratePad(&Pad);
 			SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0, 0, 0));
-
+			
+			
 			if (!blitBackground()){
 				quit = false;
 				puts("Problemas ao imprimir o fundo.\n");
@@ -80,12 +83,7 @@ int main(int argc, char* args[]){
 				puts("Problemas ao imprimir a bola.\n");
 			}
 
-
-
-
 			colisao(&Ball, &Pad, &Game, &Player);
-
-
 
 			if(!imprimeMapa(&Game, Blocks)){
 				quit = false;
@@ -96,8 +94,7 @@ int main(int argc, char* args[]){
 				puts("Problemas ao imprimir o pad.\n");
 			}
 			updatePlayer(&Player, &Game);
-
-
+			printPlayerStats(Player,fonteScore);
 			SDL_UpdateWindowSurface(gWindow);
 			SDL_Delay(1000/FPS);
 		}

@@ -29,8 +29,8 @@
 #define BALL_ADDRESS "./img/ball.png"
 #define BALL_INIT_SPEED_X 6.5
 #define BALL_INIT_SPEED_Y 4.5
-#define BALL_MAX_SPEED_X 7.0
-#define BALL_MIN_SPEED_X 5.5
+#define BALL_MAX_SPEED_X 8.0
+#define BALL_MIN_SPEED_X 4.5
 #define BALL_CORRECT 2 /* Diminuir o ínidice de colisões com a quina */
 
 //PAD constants
