@@ -13,6 +13,7 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include <math.h>
+#include <time.h>
 #include "defs.h"
 #include "globais.h"
 #include "func.h"
@@ -32,6 +33,12 @@ int main(int argc, char* args[]){
 	Player.lives = 3;
 	Player.incremento = 0;
 	TTF_Font* fonteScore;	
+	clock_t tempo_i, tempo_f;
+	double tempo_gasto;
+	/*
+	 * Esse incremento conta quantas vidas extras serão conferidas ao jogador
+	 * a cada mil pontos.
+	 */
 
 	trash.topo = 0;
 	if(!init()){
@@ -49,6 +56,7 @@ int main(int argc, char* args[]){
 		
 		
 		while(!quit){
+			tempo_i = clock();
 			while(SDL_PollEvent(&e) != 0 ){
 				switch(e.type){
 					case SDL_QUIT:
@@ -96,7 +104,9 @@ int main(int argc, char* args[]){
 			updatePlayer(&Player, &Game);
 			printPlayerStats(Player,fonteScore);
 			SDL_UpdateWindowSurface(gWindow);
-			SDL_Delay(1000/FPS);
+			tempo_f = clock();
+			tempo_gasto = (double)(tempo_f-tempo_i)/CLOCKS_PER_SEC;
+			SDL_Delay((int)(1000/FPS - 1000*tempo_gasto)) ;
 		}
 	}
 
