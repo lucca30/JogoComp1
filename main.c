@@ -29,19 +29,19 @@ int main(int argc, char* args[]){
 	Game.level = 0;
 	Player.score = 0;
 	Player.lives = 3;
+	Player.incremento = 0;
 	/*
 	 * Esse incremento conta quantas vidas extras serão conferidas ao jogador
 	 * a cada mil pontos.
 	 */
-	int incremento = 0;
 
 	trash.topo = 0;
 	if(!init()){
   		printf("Failed to initialize!\n");
   	}
 	else {
-		loadLevel(&Game);
-		menuPrincipal();
+
+		menuPrincipal(&Game);
 
 		if(!createBlock(Blocks) || !createBall(&Ball) || !createPad(&Pad) || !createBackground(BACKGROUND_ADDRESS1) ){
 			quit=false;
@@ -94,27 +94,8 @@ int main(int argc, char* args[]){
 			if(!movePad(&Pad)){
 				quit = false;
 				puts("Problemas ao imprimir o pad.\n");
-				}
-
-			/*
-			 * Essa série de ifs verifica as vidas extras, as vidas,
-			 * e ordena as pontuações até então..
-			 */
-			if(Player.score%1000 != 0) {
-				incremento = 1;
 			}
-			if(Player.score%1000 == 0 && Player.score!=0 && incremento) {
-				incremento = 0;
-				Player.lives++;
-				printf("vidas %d\n", Player.lives);
-			}
-			if(Player.lives < 0){
-				sortRank(&Player);
-				//Aqui tem que abrir uma tela de gameover/continue.
-				Player.lives = 3;
-				Player.score = 0;
-				menuPrincipal();
-			}
+			updatePlayer(&Player, &Game);
 
 
 			SDL_UpdateWindowSurface(gWindow);

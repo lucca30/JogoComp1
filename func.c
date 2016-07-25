@@ -454,10 +454,11 @@ int blitBackground(void){
 	return success;
 	}
 
-void menuPrincipal(void){
+void menuPrincipal(GAMESTATS *game){
 	SDL_Surface* menuTela = NULL;
 	SDL_Surface* fundo = NULL;
 	SDL_Surface* botao1 = NULL;
+	loadLevel(game);
 
 	//Loading Surfaces
 	fundo = loadSurface(TELAINICIAL_ADDRESS1);
@@ -590,4 +591,26 @@ void loadLevel(GAMESTATS *game){
 	fread(game, sizeof(GAMESTATS), 1, pArq);
 	fclose(pArq);
 	game->level = fase;
+}
+
+void updatePlayer(PLAYERSTATS *Player, GAMESTATS *game){
+	if(Player->score%1000 != 0) {
+		Player->incremento = 1;
+	}
+	if(Player->score%1000 == 0 && Player->score!=0 && Player->incremento) {
+		Player->incremento = 0;
+		Player->lives++;
+		printf("vidas %d\n", Player->lives);
+	}
+	if(Player->lives < 0){
+		sortRank(Player);
+		//Aqui tem que abrir uma tela de gameover/continue.
+		Player->lives = 3;
+		Player->score = 0;
+		menuPrincipal(game);
+	}
+	if(Player->score == game->total_level_score){
+		game->level++;
+		loadLevel(game);
+	}
 }

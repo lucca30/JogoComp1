@@ -84,12 +84,13 @@ typedef struct _GAMESTATS{
 	int moving_ball;
 	int mapa[10][9];
 	int level;
+	int total_level_score;
 } GAMESTATS;
 
 typedef struct _PLAYERSTATS{
 	char playerName[5];
 	int score;
-	int lives;
+	int lives, incremento;
 } PLAYERSTATS;
 
 typedef struct _LIXO{

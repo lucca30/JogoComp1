@@ -64,7 +64,7 @@ int blitBackground(void);
  * Imprime Background
  */
 
-void menuPrincipal(void);
+void menuPrincipal(GAMESTATS *game);
 /*
  * Menu principal
  * */
@@ -85,3 +85,4 @@ int compare(PLAYERSTATS *a, PLAYERSTATS *b);
  * Usada na sortRank
  */
 void loadLevel(GAMESTATS *game);
+void updatePlayer(PLAYERSTATS *Player, GAMESTATS *game);
