@@ -54,6 +54,9 @@
 #define PAD_COL_4D_x 200-PAD_WIDTH/2
 #define PAD_COL_4_y 40-PAD_HEIGHT/2
 
+//Binary addresses
+#define MAP_ADDRESS "./level.bin"
+
 //MACROS
 #define MOD(a)a>0?a:-a
 
@@ -79,6 +82,8 @@ typedef struct _PAD{
 
 typedef struct _GAMESTATS{
 	int moving_ball;
+	int mapa[10][9];
+	int level;
 } GAMESTATS;
 
 typedef struct _PLAYERSTATS{

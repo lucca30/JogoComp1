@@ -6,7 +6,7 @@
 #include "globais.h"
 #include "func.h"
 
-int imprimeMapa(int mapa[10][9], BLOCK *b){
+int imprimeMapa(GAMESTATS *game, BLOCK *b){
 	int i, j;
 	int success = true;
 	SDL_Rect srcRct, destRct;
@@ -16,10 +16,10 @@ int imprimeMapa(int mapa[10][9], BLOCK *b){
 	srcRct.h = BLOCK_HEIGHT;
 	for(i=0;i<10;i++){
 		for(j=0;j<9;j++){
-			if(mapa[i][j]!=0) {
+			if((game->mapa[i][j])!=0) {
 				destRct.x=j*BLOCK_WIDTH + BLOCK_WIDTH/2;
 				destRct.y=i*BLOCK_HEIGHT;
-				if(SDL_BlitSurface(b[mapa[i][j]-1].image, &srcRct, gScreenSurface, &destRct) < 0){
+				if(SDL_BlitSurface(b[game->mapa[i][j]-1].image, &srcRct, gScreenSurface, &destRct) < 0){
 					printf("SDL could not blit! SDL Error: %s\n", SDL_GetError());
 					success = false;
 				}
@@ -96,8 +96,10 @@ int moveBall(BALL *b, PAD *p, GAMESTATS *game){
 	return success;
 }
 
-void colisao(BALL *b, int mapa[10][9], PAD *p, GAMESTATS *game, PLAYERSTATS *player){
+void colisao(BALL *b, PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 	int i, j;
+
+
 
 	//Colisão com as laterais das paredes
 	if(b->posx >= SCREEN_WIDTH - BALL_WIDTH/2 - BLOCK_WIDTH/2 || b->posx <= BALL_WIDTH/2 + BLOCK_WIDTH/2){
@@ -186,18 +188,18 @@ void colisao(BALL *b, int mapa[10][9], PAD *p, GAMESTATS *game, PLAYERSTATS *pla
 	//Colisão de Blocos
 	for(i=9;i>=0;i--){
 		for(j=8;j>=0;j--){
-			if(mapa[i][j]!=0){
+			if(game->mapa[i][j]!=0){
 				if(b->posy > (i)*BLOCK_HEIGHT && b->posy < (i+1)*BLOCK_HEIGHT){
 					//Colisão com a parte esquerda do bloco
 					if(b->posx >= j*BLOCK_WIDTH - BALL_WIDTH/2 + BLOCK_WIDTH/2 && b->posx <= j*BLOCK_WIDTH + BLOCK_WIDTH){
-						mapa[i][j]--;;
+						game->mapa[i][j]--;;
 						b->stepx = -MOD(b->stepx);
 						player->score+=100; printf("score %d\n", player->score);
 						return;
 					}
 					//Colisão com a parte direita do bloco
 					if(b->posx <= (j+1)*BLOCK_WIDTH + BALL_WIDTH/2 +BLOCK_WIDTH/2 && b->posx >= (j+1)*BLOCK_WIDTH){
-						mapa[i][j]--;
+						game->mapa[i][j]--;
 						b->stepx = MOD(b->stepx);
 						player->score+=100; printf("score %d\n", player->score);
 						return;
@@ -206,42 +208,42 @@ void colisao(BALL *b, int mapa[10][9], PAD *p, GAMESTATS *game, PLAYERSTATS *pla
 				//Colisão com parte superior do bloco
 				if(b->posx > j*BLOCK_WIDTH + BLOCK_WIDTH/2 && b->posx < (j+1)*BLOCK_WIDTH + BLOCK_WIDTH/2){
 					if(b->posy >= i*BLOCK_HEIGHT - BALL_HEIGHT/2 && b->posy <= i*BLOCK_HEIGHT ){
-						mapa[i][j]--;
+						game->mapa[i][j]--;
 						b->stepy = -MOD(b->stepy);
 						player->score+=100; printf("score %d\n", player->score);
 						return;
 					}
 					//Colisão com a parte inferior do bloco
 					if(b->posy <= (i+1)*BLOCK_HEIGHT + BALL_HEIGHT/2 && b->posy >= (i+1)*BLOCK_HEIGHT ){
-						mapa[i][j]--;
+						game->mapa[i][j]--;
 						b->stepy = MOD(b->stepy);
 						player->score+=100; printf("score %d\n", player->score);
 						return;
 					}
 				}
 				if(distancia(b->posx, b->posy, j*BLOCK_WIDTH + BLOCK_WIDTH/2, i*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
-					mapa[i][j]--;
+					game->mapa[i][j]--;
 					b->stepx = -MOD(b->stepx);
 					b->stepy = -MOD(b->stepy);
 					player->score+=100; printf("score %d\n", player->score);
 					return;
 				}
 				if(distancia(b->posx, b->posy, (j+1)*BLOCK_WIDTH + BLOCK_WIDTH/2, i*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
-					mapa[i][j]--;
+					game->mapa[i][j]--;
 					b->stepx = MOD(b->stepx);
 					b->stepy = -MOD(b->stepy);
 					player->score+=100; printf("score %d\n", player->score);
 					return;
 				}
 				if(distancia(b->posx, b->posy, j*BLOCK_WIDTH + BLOCK_WIDTH/2, (i+1)*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
-					mapa[i][j]--;
+					game->mapa[i][j]--;
 					b->stepx = -MOD(b->stepx);
 					b->stepy = MOD(b->stepy);
 					player->score+=100; printf("score %d\n", player->score);
 					return;
 				}
 				if(distancia(b->posx, b->posy, (j+1)*BLOCK_WIDTH + BLOCK_WIDTH/2, (i+1)*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
-					mapa[i][j]--;
+					game->mapa[i][j]--;
 					b->stepx = MOD(b->stepx);
 					b->stepy = MOD(b->stepy);
 					player->score+=100; printf("score %d\n", player->score);
@@ -578,4 +580,14 @@ int compare(PLAYERSTATS *a, PLAYERSTATS *b){
 	if(a->score < b->score) return -1;
 	else if(a->score > b->score) return 0;
 	else return 0;
+}
+
+void loadLevel(GAMESTATS *game){
+	FILE *pArq;
+	int fase = game->level;
+	pArq = fopen(MAP_ADDRESS,"r");
+	fseek(pArq, fase*sizeof(GAMESTATS), SEEK_SET);
+	fread(game, sizeof(GAMESTATS), 1, pArq);
+	fclose(pArq);
+	game->level = fase;
 }

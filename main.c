@@ -26,8 +26,7 @@ int main(int argc, char* args[]){
 	PAD Pad;
 	GAMESTATS Game;
 	PLAYERSTATS Player;
-	Game.moving_ball = false;
-
+	Game.level = 0;
 	Player.score = 0;
 	Player.lives = 3;
 	/*
@@ -37,14 +36,11 @@ int main(int argc, char* args[]){
 	int incremento = 0;
 
 	trash.topo = 0;
-
-
-
 	if(!init()){
   		printf("Failed to initialize!\n");
   	}
 	else {
-
+		loadLevel(&Game);
 		menuPrincipal();
 
 		if(!createBlock(Blocks) || !createBall(&Ball) || !createPad(&Pad) || !createBackground(BACKGROUND_ADDRESS1) ){
@@ -83,8 +79,15 @@ int main(int argc, char* args[]){
 				quit = false;
 				puts("Problemas ao imprimir a bola.\n");
 			}
-			colisao(&Ball, Mapa1, &Pad, &Game, &Player);
-			if(!imprimeMapa(Mapa1, Blocks)){
+
+
+
+
+			colisao(&Ball, &Pad, &Game, &Player);
+
+
+
+			if(!imprimeMapa(&Game, Blocks)){
 				quit = false;
 				puts("Problemas ao imprimir um bloco.\n");
 			}
@@ -110,6 +113,7 @@ int main(int argc, char* args[]){
 				//Aqui tem que abrir uma tela de gameover/continue.
 				Player.lives = 3;
 				Player.score = 0;
+				menuPrincipal();
 			}
 
 
