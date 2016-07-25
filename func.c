@@ -99,7 +99,7 @@ int moveBall(BALL *b, PAD *p, GAMESTATS *game){
 
 void colisao(BALL *b, PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 	int i, j;
-	
+
 	//Colisão com as laterais das paredes
 	if(b->posx >= SCREEN_WIDTH - BALL_WIDTH/2 - BLOCK_WIDTH/2 || b->posx <= BALL_WIDTH/2 + BLOCK_WIDTH/2){
 		b->stepx = -(b->stepx);
@@ -459,11 +459,9 @@ int blitBackground(void){
 	}
 
 void menuPrincipal(GAMESTATS *game){
-	SDL_Surface* menuTela = NULL;
 	SDL_Surface* fundo = NULL;
 	SDL_Surface* botao1 = NULL;
 	loadLevel(game);
-
 	//Loading Surfaces
 	fundo = loadSurface(TELAINICIAL_ADDRESS1);
 	if(fundo==NULL){
@@ -491,7 +489,6 @@ void menuPrincipal(GAMESTATS *game){
 
 	int quit = 0;
 	SDL_Event event;
-	menuTela = SDL_GetWindowSurface( gWindow );
 	//Guarda qual opcao de botao foi acionada
 	int opcaoSelecionada = 1;
 
@@ -504,13 +501,13 @@ void menuPrincipal(GAMESTATS *game){
 					case SDL_KEYDOWN:
 						if (opcaoSelecionada == 1){
 							quit = 1;
-							}
+						}
 						break;
 				}
 			}
-		SDL_FillRect(menuTela, NULL, SDL_MapRGB(menuTela->format, 0xFF, 0xFF, 0xFF));
-		SDL_BlitSurface(fundo, NULL, menuTela, &dstImgPr);
-		SDL_BlitSurface(botao1, NULL, menuTela, &dstButt1);
+		SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0xFF, 0xFF, 0xFF));
+		SDL_BlitSurface(fundo, NULL, gScreenSurface, &dstImgPr);
+		SDL_BlitSurface(botao1, NULL, gScreenSurface, &dstButt1);
 		SDL_UpdateWindowSurface(gWindow);
 		SDL_Delay(1000/FPS);
 		}
@@ -611,6 +608,9 @@ void updatePlayer(PLAYERSTATS *Player, GAMESTATS *game){
 		Player->lives = 3;
 		Player->score = 0;
 		menuPrincipal(game);
+		game->level = 0;
+		loadLevel(game);
+		return;
 	}
 	if(Player->score == game->total_level_score){
 		game->level++;
@@ -633,18 +633,18 @@ SDL_Surface* createSurfaceTTF(char* texto,TTF_Font* fonte,int colorR,int colorG,
 
 void printPlayerStats(PLAYERSTATS player, TTF_Font* fonteScore){
 	char stringTemp[50];
-	
+
 	SDL_Surface* scoreSuperficie;
 	SDL_Rect rectTemp;
 	rectTemp.x = 50;
 	rectTemp.y = 0;
 	rectTemp.w = 0;
 	rectTemp.h = 0;
-	
+
 	sprintf(stringTemp,"Score: %5d Vidas: %d",player.score, player.lives);
 	scoreSuperficie = createSurfaceTTF(stringTemp,fonteScore,255,255,255);
-	
+
 	SDL_BlitSurface(scoreSuperficie, NULL, gScreenSurface, &rectTemp);
-	
-	
+
+
 	}

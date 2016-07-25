@@ -32,7 +32,7 @@ int main(int argc, char* args[]){
 	Player.score = 0;
 	Player.lives = 3;
 	Player.incremento = 0;
-	TTF_Font* fonteScore;	
+	TTF_Font* fonteScore;
 	clock_t tempo_i, tempo_f;
 	double tempo_gasto;
 	/*
@@ -53,8 +53,8 @@ int main(int argc, char* args[]){
 		}
 		//Sessão Temporária do TTF-niichan
 		fonteScore = preparaFonte("fonteScore.ttf", 35);
-		
-		
+
+
 		while(!quit){
 			tempo_i = clock();
 			while(SDL_PollEvent(&e) != 0 ){
@@ -80,8 +80,8 @@ int main(int argc, char* args[]){
 
 			aceleratePad(&Pad);
 			SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0, 0, 0));
-			
-			
+
+
 			if (!blitBackground()){
 				quit = false;
 				puts("Problemas ao imprimir o fundo.\n");
@@ -101,10 +101,10 @@ int main(int argc, char* args[]){
 				quit = false;
 				puts("Problemas ao imprimir o pad.\n");
 			}
-			updatePlayer(&Player, &Game);
 			printPlayerStats(Player,fonteScore);
-			SDL_UpdateWindowSurface(gWindow);
 			tempo_f = clock();
+			updatePlayer(&Player, &Game);
+			SDL_UpdateWindowSurface(gWindow);
 			tempo_gasto = (double)(tempo_f-tempo_i)/CLOCKS_PER_SEC;
 			SDL_Delay((int)(1000/FPS - 1000*tempo_gasto)) ;
 		}
