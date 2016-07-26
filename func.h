@@ -110,3 +110,5 @@ void printRanking(void);
 int telaRanking(void);
 
 void telaLevel(GAMESTATS *game);
+
+void proximaFaseTela(void);

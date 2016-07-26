@@ -453,48 +453,78 @@ int blitBackground(void){
 
 	return success;
 	}
-
+	
 void menuPrincipal(GAMESTATS *game){
 	SDL_Surface* fundo = NULL;
 	SDL_Surface* botao1 = NULL;
+	SDL_Surface* botao2 = NULL;
+	SDL_Surface* ponteiro = NULL;
+	
 	loadLevel(game);
 	//Loading Surfaces
 	fundo = loadSurface(TELAINICIAL_ADDRESS1);
-	if(fundo==NULL){
-		puts("Imagem da Tela Pr não foi carregada.");
-	}
+	if(fundo==NULL){puts("Imagem da Tela Pr não foi carregada.");}
 	botao1 = loadSurface(BUTTON1_ADDRESS1);
-	if(botao1==NULL){
-		puts("Imagem da Botao1 não foi carregada.");
-	}
+	
+	if(botao1==NULL){puts("Imagem da Botao1 não foi carregada.");}
 	SDL_SetColorKey(botao1, SDL_TRUE, SDL_MapRGB( (botao1)->format, 0xFF, 0, 0xFF));
 
+	botao2 = loadSurface(BUTTON2_ADDRESS1);
+	if(botao2==NULL){puts("Imagem da Botao2 não foi carregada.");}
+	SDL_SetColorKey(botao2, SDL_TRUE, SDL_MapRGB( (botao2)->format, 0xFF, 0, 0xFF));
+	
+	ponteiro = loadSurface(PONTEIRO_ADDRESS1);
+	if(ponteiro==NULL){puts("Imagem da Ponteiro não foi carregada.");}
+	SDL_SetColorKey(ponteiro, SDL_TRUE, SDL_MapRGB( (ponteiro)->format, 0xFF, 0, 0xFF));
+	
 	//Rect da Imagem Principal
 	SDL_Rect dstImgPr = {0,0,800,600};
 	//Rect do botao1
-	SDL_Rect dstButt1 = {400 - 334/2,350,334,80};
+	SDL_Rect dstButt1 = {400 - 334/2,290,334,80};
+	//Rect do botao2
+	SDL_Rect dstButt2 = {400 - 334/2,390,334,80};
+	//Rect do botao2
+	SDL_Rect dstPont = {400 - 334/2 - 50,400,334,80};
 
 	int quit = 0;
 	SDL_Event event;
-	//Guarda qual opcao de botao foi acionada
-	int opcaoSelecionada = 1;
+	int opcaoSelecionada = 1;//Guarda qual opcao de botao foi acionada
 
 	while(!quit){
+		//Se apertar para baixo na ultima opcao volta para a de cima
+		if (opcaoSelecionada > 2){opcaoSelecionada = 1;}
+		if (opcaoSelecionada < 1){opcaoSelecionada = 2;}
+		
+		dstPont.y = 200 + (opcaoSelecionada*100);
+		
 		while(SDL_PollEvent(&event) != 0 ){
 				switch(event.type){
 					case SDL_QUIT:
 						quit = 1;
 						break;
 					case SDL_KEYDOWN:
-						if (opcaoSelecionada == 1){
-							quit = 1;
+						switch(event.key.keysym.sym){
+							case SDLK_DOWN:
+								opcaoSelecionada++;
+								break;
+							case SDLK_UP:
+								opcaoSelecionada--;
+								break;
+							case SDLK_SPACE:
+								if (opcaoSelecionada == 1){
+									quit = 1;
+									}
+								if (opcaoSelecionada == 2){
+									quit = telaRanking();
+									}
 						}
-						break;
 				}
 			}
 		SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0xFF, 0xFF, 0xFF));
 		SDL_BlitSurface(fundo, NULL, gScreenSurface, &dstImgPr);
 		SDL_BlitSurface(botao1, NULL, gScreenSurface, &dstButt1);
+		SDL_BlitSurface(botao2, NULL, gScreenSurface, &dstButt2);
+		SDL_BlitSurface(ponteiro, NULL, gScreenSurface, &dstPont);
 		SDL_UpdateWindowSurface(gWindow);
 		SDL_Delay(1000/FPS);
 		}
