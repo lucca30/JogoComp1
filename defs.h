@@ -63,6 +63,15 @@
 #define PAD_COL_4D_x 200-PAD_WIDTH/2
 #define PAD_COL_4_y 40-PAD_HEIGHT/2
 
+//Sound constants
+#define SE1_ADDRESS "./music/level_complete.wav"
+#define SE2_ADDRESS "./music/hit.wav"
+#define SE3_ADDRESS "./music/hit2.wav"
+#define SE4_ADDRESS "./music/hit3.wav"
+#define SE5_ADDRESS "./music/levelup.wav"
+#define SE6_ADDRESS "./music/launch.wav"
+#define SE7_ADDRESS "./music/death.wav"
+
 //Binary addresses
 #define MAP_ADDRESS "./level.bin"
 

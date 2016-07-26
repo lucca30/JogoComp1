@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include <math.h>
 #include <string.h>
 #include "defs.h"
@@ -104,17 +105,20 @@ void colisao(BALL *b, PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 	//Colisão com as laterais das paredes
 	if(b->posx >= SCREEN_WIDTH - BALL_WIDTH/2 - BLOCK_WIDTH/2 || b->posx <= BALL_WIDTH/2 + BLOCK_WIDTH/2){
 		b->stepx = -(b->stepx);
+		playSound(gHit3);
 		return;
 	}
 	//Colisão com o topo
 	if(b->posy <= BALL_HEIGHT/2 + BLOCK_HEIGHT){
 		b->stepy = MOD(b->stepy);
+		playSound(gHit3);
 		return;
 	}
 	//Colisão com o fundo
 	if(b->posy >= SCREEN_HEIGHT - BALL_HEIGHT/2 ){
 		game->moving_ball = false;
 		player->lives--;
+		playSound(gDeath);
 		return;
 	}
 	int pad_sup_esq = p->posx - PAD_WIDTH/2 + PAD_CORRECT;
@@ -126,20 +130,24 @@ void colisao(BALL *b, PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 		b->stepy = -MOD(b->stepy);
 		if(b->posx > p->posx){
 			f = 1.0 + (b->posx - p->posx)/(PAD_WIDTH*3);
+			playSound(gHit2);
 		}
 		else{
 			f = 1.0 + (p->posx - b->posx)/(PAD_WIDTH*3);
+			//playSound(gHit2);
 		}
 		//Com a parte esquerda
 		if(b->posx >= pad_sup_esq && b->posx < p->posx && game->moving_ball){
 			b->stepx *= b->stepx<0?f:1.0/f;
 			corrige(&(b->stepx));
+			playSound(gHit2);
 			return;
 		}
 		//Com a parte direita
 		if(b->posx <= pad_sup_dir && b->posx > p->posx && game->moving_ball){
 			b->stepx *= b->stepx<0?1.0/f:f;
 			corrige(&(b->stepx));
+			playSound(gHit2);
 			return;
 		}
 	}
@@ -147,41 +155,49 @@ void colisao(BALL *b, PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 	if(distancia(b->posx, b->posy,p->posx+PAD_COL_1E_x,p->posy+PAD_COL_1_y) <= BALL_WIDTH/2){
 		b->stepy = -MOD(b->stepy);
 		b->stepx = -MOD(b->stepx);
+		playSound(gHit2);
 		return;
 	}
 	if(distancia(b->posx, b->posy,p->posx+PAD_COL_2E_x,p->posy+PAD_COL_2_y) <= BALL_WIDTH/2){
 		b->stepy = -MOD(b->stepy);
 		b->stepx = -MOD(b->stepx);
+		playSound(gHit2);
 		return;
 	}
 	if(distancia(b->posx, b->posy,p->posx+PAD_COL_3E_x,p->posy+PAD_COL_3_y) <= BALL_WIDTH/2){
 		b->stepy = -MOD(b->stepy);
 		b->stepx = -MOD(b->stepx);
+		playSound(gHit2);
 		return;
 	}
 	if(distancia(b->posx, b->posy,p->posx+PAD_COL_4E_x,p->posy+PAD_COL_4_y) <= BALL_WIDTH/2){
 		b->stepy = -MOD(b->stepy);
 		b->stepx = -MOD(b->stepx);
+		playSound(gHit2);
 		return;
 	}
 	if(distancia(b->posx, b->posy,p->posx+PAD_COL_1D_x,p->posy+PAD_COL_1_y) <= BALL_WIDTH/2){
 		b->stepy = -MOD(b->stepy);
 		b->stepx = MOD(b->stepx);
+		playSound(gHit2);
 		return;
 	}
 	if(distancia(b->posx, b->posy,p->posx+PAD_COL_2D_x,p->posy+PAD_COL_2_y) <= BALL_WIDTH/2){
 		b->stepy = -MOD(b->stepy);
 		b->stepx = MOD(b->stepx);
+		playSound(gHit2);
 		return;
 	}
 	if(distancia(b->posx, b->posy,p->posx+PAD_COL_3D_x,p->posy+PAD_COL_3_y) <= BALL_WIDTH/2){
 		b->stepy = -MOD(b->stepy);
 		b->stepx = MOD(b->stepx);
+		playSound(gHit2);
 		return;
 	}
 	if(distancia(b->posx, b->posy,p->posx+PAD_COL_4D_x,p->posy+PAD_COL_4_y) <= BALL_WIDTH/2){
 		b->stepy = -MOD(b->stepy);
 		b->stepx = MOD(b->stepx);
+		playSound(gHit2);
 		return;
 	}
 
@@ -195,6 +211,7 @@ void colisao(BALL *b, PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 						game->mapa[i][j]--;;
 						b->stepx = -MOD(b->stepx);
 						player->score+=100;
+						playSound(gHit);
 						return;
 					}
 					//Colisão com a parte direita do bloco
@@ -202,6 +219,7 @@ void colisao(BALL *b, PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 						game->mapa[i][j]--;
 						b->stepx = MOD(b->stepx);
 						player->score+=100;
+						playSound(gHit);
 						return;
 					}
 				}
@@ -211,6 +229,7 @@ void colisao(BALL *b, PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 						game->mapa[i][j]--;
 						b->stepy = -MOD(b->stepy);
 						player->score+=100;
+						playSound(gHit);
 						return;
 					}
 					//Colisão com a parte inferior do bloco
@@ -218,6 +237,7 @@ void colisao(BALL *b, PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 						game->mapa[i][j]--;
 						b->stepy = MOD(b->stepy);
 						player->score+=100;
+						playSound(gHit);
 						return;
 					}
 				}
@@ -226,6 +246,7 @@ void colisao(BALL *b, PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 					b->stepx = -MOD(b->stepx);
 					b->stepy = -MOD(b->stepy);
 					player->score+=100;
+					playSound(gHit);
 					return;
 				}
 				if(distancia(b->posx, b->posy, (j+1)*BLOCK_WIDTH + BLOCK_WIDTH/2, i*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
@@ -233,6 +254,7 @@ void colisao(BALL *b, PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 					b->stepx = MOD(b->stepx);
 					b->stepy = -MOD(b->stepy);
 					player->score+=100;
+					playSound(gHit);
 					return;
 				}
 				if(distancia(b->posx, b->posy, j*BLOCK_WIDTH + BLOCK_WIDTH/2, (i+1)*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
@@ -240,6 +262,7 @@ void colisao(BALL *b, PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 					b->stepx = -MOD(b->stepx);
 					b->stepy = MOD(b->stepy);
 					player->score+=100;
+					playSound(gHit);
 					return;
 				}
 				if(distancia(b->posx, b->posy, (j+1)*BLOCK_WIDTH + BLOCK_WIDTH/2, (i+1)*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
@@ -247,6 +270,7 @@ void colisao(BALL *b, PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 					b->stepx = MOD(b->stepx);
 					b->stepy = MOD(b->stepy);
 					player->score+=100;
+					playSound(gHit);
 					return;
 				}
 			}
@@ -264,8 +288,13 @@ int init(){
     if (TTF_Init() == -1){
 		printf("SDL could not initialize TTF! SDL Error: %s\n", SDL_GetError());
         success = false;
-		}
-    else{
+	}
+
+	if(Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096) == -1){
+		success = false;
+	}
+
+	else{
         gWindow = SDL_CreateWindow("Ultimate Neotron HD PLUS PREMIUM", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
         if(gWindow == NULL)
         {
@@ -273,8 +302,19 @@ int init(){
             success = false;
         }
         else{
-						//Habilita o carregamento de imagens JPG
-						//Colocar "IMG_INIT_PNG" caso queira trabalhar com imagens PNG
+			//Carregamento do áudio
+			gLevel = Mix_LoadWAV(SE1_ADDRESS);
+			gHit = Mix_LoadWAV(SE2_ADDRESS);
+			gHit2 = Mix_LoadWAV(SE3_ADDRESS);
+			gHit3 = Mix_LoadWAV(SE4_ADDRESS);
+			gLevelup = Mix_LoadWAV(SE5_ADDRESS);
+			gLaunch = Mix_LoadWAV(SE6_ADDRESS);
+			gDeath = Mix_LoadWAV(SE7_ADDRESS);
+			if(!gLevel || !gHit || !gHit2 || !gHit3 || !gLevelup || !gLaunch || !gDeath) {
+				success = false;
+			}
+
+			//Carregamento de imagens
             int imgFlags = IMG_INIT_JPG|IMG_INIT_PNG;
             if(!(IMG_Init(imgFlags) & imgFlags))
             {
@@ -306,6 +346,9 @@ void closing(){
     IMG_Quit();
     SDL_Quit();
     TTF_Quit();
+	Mix_FreeChunk(gLevel);
+	Mix_CloseAudio();
+
 }
 
 SDL_Surface* loadSurface(char *address){
@@ -368,7 +411,7 @@ int movePad(PAD *p){
 	return success;
 }
 
-void aceleratePad(PAD *p){
+void acceleratePad(PAD *p){
 	const Uint8 *state = SDL_GetKeyboardState(NULL);
 	if (state[SDL_SCANCODE_RIGHT] > 0 && p->vetor.x <= Vmax){
 		p->vetor.x = p->vetor.x + 1;
@@ -560,18 +603,18 @@ void pushTrash(SDL_Surface *surf){
 }
 
 void sortRank(PLAYERSTATS *player){
-	FILE *file1;
+	FILE *pArq;
 	int i, j;
 	PLAYERSTATS lidos[11];
 	/*
 	 * Aqui abre-se o arquivo binário para leitura e ordenação, colocando o
 	 * jogador atual no final do mesmo.
 	 */
-	file1 = fopen("ranking.bin", "r");
-	if(!file1) puts("Erro ao abrir ranking");
-	fread(lidos, sizeof(PLAYERSTATS), 10, file1);
+	pArq = fopen("ranking.bin", "r");
+	if(!pArq) puts("Erro ao abrir ranking");
+	fread(lidos, sizeof(PLAYERSTATS), 10, pArq);
 	lidos[10] = *player;
-	fclose(file1);
+	fclose(pArq);
 	/*
 	 * Aqui realiza-se o ordenamento desse vetor.
 	 */
@@ -587,10 +630,10 @@ void sortRank(PLAYERSTATS *player){
 	/*
 	 * Aqui os arquivos são retornados ao arquivo binário.
 	 */
-	file1 = fopen("ranking.bin", "w");
-	if(!file1) puts("Erro ao abrir ranking");
-	fwrite(lidos, sizeof(PLAYERSTATS), 10, file1);
-	fclose(file1);
+	pArq = fopen("ranking.bin", "w");
+	if(!pArq) puts("Erro ao abrir ranking");
+	fwrite(lidos, sizeof(PLAYERSTATS), 10, pArq);
+	fclose(pArq);
 	return;
 }
 
@@ -618,6 +661,7 @@ int updatePlayer(PLAYERSTATS *Player, GAMESTATS *game, PAD *p){
 	if(Player->score%10000 == 0 && Player->score!=0 && Player->incremento) {
 		Player->incremento = 0;
 		Player->lives++;
+		playSound(gLevelup);
 	}
 	if(Player->lives < 0){
 		sortRank(Player);
@@ -643,7 +687,6 @@ TTF_Font* preparaFonte(char* arquivoFonte, int size){
 	return fonte;
 	}
 
-//TTF FODA-SE EDITION
 SDL_Surface* createSurfaceTTF(char* texto,TTF_Font* fonte,int colorR,int colorG,int colorB){
 	SDL_Color cor = {colorR, colorG, colorB};
 	SDL_Surface* superficieTexto = TTF_RenderText_Blended(fonte, texto, cor);
@@ -804,4 +847,12 @@ void logoTela(void){
 	SDL_BlitSurface(fundo, NULL, gScreenSurface, &dstImg);
 	SDL_UpdateWindowSurface(gWindow);
 	SDL_Delay(3000);
+	}
+
+int playSound(Mix_Chunk *effect){
+	if(Mix_PlayChannel(-1, effect, 0) == -1){
+		return 1;
+	}
+
+	return 0;
 	}

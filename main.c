@@ -1,5 +1,5 @@
 /*
- * ULTIMATE NEOTRON HD
+ * Castle Break
  *
  * Autores: Henrique Vermelho, Lucca Martins, Pedro Vitor
  *
@@ -12,6 +12,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include <math.h>
 #include <time.h>
 #include "defs.h"
@@ -76,6 +77,7 @@ int main(int argc, char* args[]){
 								break;
 							case SDLK_SPACE:
 								Game.moving_ball = true;
+								playSound(gLaunch);
 								break;
 							case SDLK_r:
 								telaRanking();
@@ -86,7 +88,7 @@ int main(int argc, char* args[]){
 				}
 			}
 
-			aceleratePad(&Pad);
+			acceleratePad(&Pad);
 			SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0, 0, 0));
 
 
@@ -109,7 +111,7 @@ int main(int argc, char* args[]){
 				quit = false;
 				puts("Problemas ao imprimir o pad.\n");
 			}
-			printPlayerStats(Player,fonteScore, Game);
+			printPlayerStats(Player, fonteScore, Game);
 			tempo_f = clock();
 			quit = updatePlayer(&Player, &Game, &Pad);
 			SDL_UpdateWindowSurface(gWindow);
