@@ -23,6 +23,8 @@
 
 #define BUTTON1_ADDRESS1 "./img/button1.png"
 
+#define GAMEOVER_ADDRESS1 "./img/gameover.png"
+
 //BALL constants
 #define BALL_WIDTH 24
 #define BALL_HEIGHT 24

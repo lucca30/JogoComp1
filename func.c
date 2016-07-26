@@ -575,9 +575,6 @@ void sortRank(PLAYERSTATS *player){
 	return;
 }
 
-/*
- * Função usada na sortRank, compara dois elementos PLAYERSTATS.
- */
 int compare(PLAYERSTATS *a, PLAYERSTATS *b){
 	if(a->score < b->score) return -1;
 	else if(a->score > b->score) return 0;
@@ -604,7 +601,7 @@ void updatePlayer(PLAYERSTATS *Player, GAMESTATS *game){
 	}
 	if(Player->lives < 0){
 		sortRank(Player);
-		//Aqui tem que abrir uma tela de gameover/continue.
+		gameoverTela();
 		Player->lives = 3;
 		Player->score = 0;
 		menuPrincipal(game);
@@ -647,4 +644,23 @@ void printPlayerStats(PLAYERSTATS player, TTF_Font* fonteScore){
 	SDL_BlitSurface(scoreSuperficie, NULL, gScreenSurface, &rectTemp);
 
 
+	}
+
+void gameoverTela(){
+	SDL_Surface* fundo = NULL;
+	
+	//Loading Surfaces
+	fundo = loadSurface(GAMEOVER_ADDRESS1);
+	if(fundo==NULL){
+		puts("Imagem da Tela Gameover não foi carregada.");
+		}
+
+	//Rect da Imagem 
+	SDL_Rect dstImg = {0, 0, 800, 600};
+	//Guarda qual opcao de botao foi acionada
+
+	SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0xFF, 0xFF, 0xFF));
+	SDL_BlitSurface(fundo, NULL, gScreenSurface, &dstImg);
+	SDL_UpdateWindowSurface(gWindow);
+	SDL_Delay(3000);
 	}

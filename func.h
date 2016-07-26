@@ -102,3 +102,5 @@ SDL_Surface* createSurfaceTTF(char* texto,TTF_Font* fonte,int colorR,int colorG,
  * Cria uma superfície baseado em uma string, um tipo de fonte, uma corRed, uma corGreen e uma corBlue. 
  */
 void printPlayerStats(PLAYERSTATS player, TTF_Font* fonteScore);
+
+void gameoverTela();
