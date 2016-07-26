@@ -599,6 +599,7 @@ void updatePlayer(PLAYERSTATS *Player, GAMESTATS *game, PAD *p){
 	}
 	if(Player->score == game->total_level_score){
 		game->level++;
+		telaLevel(game);
 		loadLevel(game);
 	}
 }
@@ -733,4 +734,23 @@ int telaRanking(void){
 		SDL_Delay(1000/FPS);
 		}
 	return quitGAME;
+	}
+
+void telaLevel(GAMESTATS *game){
+	SDL_Surface *fundo, *message;
+	SDL_Rect destRct;
+	char stringTemp[50];
+	TTF_Font* font = preparaFonte("fonteScore.ttf", 100);
+
+	destRct.x = 220;
+	destRct.y = 240;
+
+	fundo = loadSurface(LEVEL_ADDRESS);
+	SDL_BlitSurface(fundo, NULL, gScreenSurface, NULL);
+
+	sprintf(stringTemp,"Level: %d", game->level+1);
+	message = createSurfaceTTF(stringTemp,font,255,255,255);
+	SDL_BlitSurface(message, NULL, gScreenSurface, &destRct);
+	SDL_UpdateWindowSurface(gWindow);
+	SDL_Delay(1000);
 	}

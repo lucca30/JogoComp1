@@ -108,3 +108,5 @@ void gameoverTela();
 void printRanking(void);
 
 int telaRanking(void);
+
+void telaLevel(GAMESTATS *game);

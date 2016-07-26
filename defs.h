@@ -25,6 +25,8 @@
 
 #define GAMEOVER_ADDRESS1 "./img/gameover.png"
 
+#define LEVEL_ADDRESS "./img/level.png"
+
 //BALL constants
 #define BALL_WIDTH 24
 #define BALL_HEIGHT 24
