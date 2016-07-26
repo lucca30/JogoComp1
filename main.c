@@ -45,6 +45,7 @@ int main(int argc, char* args[]){
   		printf("Failed to initialize!\n");
   	}
 	else {
+		logoTela();
 		quit = menuPrincipal(&Game);
 		if (!quit) {telaLevel(&Game);}//Se fechar no menu, nao printa a telalevel
 

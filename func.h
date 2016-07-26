@@ -112,3 +112,5 @@ int telaRanking(void);
 void telaLevel(GAMESTATS *game);
 
 void proximaFaseTela(void);
+
+void logoTela(void);

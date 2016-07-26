@@ -677,7 +677,7 @@ void printPlayerStats(PLAYERSTATS player, TTF_Font* fonteScore, GAMESTATS game){
 
 	}
 
-void gameoverTela(){
+void gameoverTela(void){
 	SDL_Surface* fundo = NULL;
 
 	//Loading Surfaces
@@ -785,4 +785,22 @@ void telaLevel(GAMESTATS *game){
 	SDL_BlitSurface(message, NULL, gScreenSurface, &destRct);
 	SDL_UpdateWindowSurface(gWindow);
 	SDL_Delay(1000);
+	}
+
+void logoTela(void){
+	SDL_Surface* fundo = NULL;
+
+	//Loading Surfaces
+	fundo = loadSurface(LOGO_ADDRESS1);
+	if(fundo==NULL){
+		puts("Imagem da Tela Logo não foi carregada.");
+		}
+
+	//Rect da Imagem
+	SDL_Rect dstImg = {0, 0, 800, 600};
+
+	SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0xFF, 0xFF, 0xFF));
+	SDL_BlitSurface(fundo, NULL, gScreenSurface, &dstImg);
+	SDL_UpdateWindowSurface(gWindow);
+	SDL_Delay(3000);
 	}

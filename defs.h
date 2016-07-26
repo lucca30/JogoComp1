@@ -20,6 +20,7 @@
 #define BACKGROUND_ADDRESS1 "./img/fundo.png"
 #define TELAINICIAL_ADDRESS1 "./img/telapr.png"
 #define FUNDOPAUSE_ADDRESS1 "./img/telapause.png"
+#define LOGO_ADDRESS1 "./img/logotela.png"
 
 //BOTOES
 #define BUTTON1_ADDRESS1 "./img/button1.png"
