@@ -107,7 +107,7 @@ int main(int argc, char* args[]){
 				quit = false;
 				puts("Problemas ao imprimir o pad.\n");
 			}
-			printPlayerStats(Player,fonteScore);
+			printPlayerStats(Player,fonteScore, Game);
 			tempo_f = clock();
 			updatePlayer(&Player, &Game, &Pad);
 			SDL_UpdateWindowSurface(gWindow);

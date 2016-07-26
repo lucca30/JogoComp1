@@ -616,8 +616,8 @@ SDL_Surface* createSurfaceTTF(char* texto,TTF_Font* fonte,int colorR,int colorG,
 	return superficieTexto;
 }
 
-void printPlayerStats(PLAYERSTATS player, TTF_Font* fonteScore){
-	char stringTemp[50];
+void printPlayerStats(PLAYERSTATS player, TTF_Font* fonteScore, GAMESTATS game){
+	char stringTemp[1000];
 
 	SDL_Surface* scoreSuperficie;
 	SDL_Rect rectTemp;
@@ -626,10 +626,15 @@ void printPlayerStats(PLAYERSTATS player, TTF_Font* fonteScore){
 	rectTemp.w = 0;
 	rectTemp.h = 0;
 
-	sprintf(stringTemp,"Score: %5d Vidas: %d",player.score, player.lives);
+	sprintf(stringTemp,"Score: %5d Vidas: %2d",player.score, player.lives);
 	scoreSuperficie = createSurfaceTTF(stringTemp,fonteScore,255,255,255);
-
 	SDL_BlitSurface(scoreSuperficie, NULL, gScreenSurface, &rectTemp);
+
+	rectTemp.x = 620;
+	sprintf(stringTemp,"Level:%d", game.level+1);
+	scoreSuperficie = createSurfaceTTF(stringTemp,fonteScore,255,255,255);
+	SDL_BlitSurface(scoreSuperficie, NULL, gScreenSurface, &rectTemp);
+
 
 
 	}

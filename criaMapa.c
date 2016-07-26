@@ -14,9 +14,9 @@ int main(void){
 	int i, j, num, k;
 	pArq = fopen("./level.bin", "w");
 	temp.moving_ball = 0;
+	temp.total_level_score = 0;	
 	scanf("%d", &k);
 	for(;k>0;k--){
-		temp.total_level_score = 0;
 		for(i=0;i<10;i++){
 			for(j=0;j<9;j++){
 				scanf("%d", &num);
