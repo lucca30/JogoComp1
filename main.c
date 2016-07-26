@@ -45,8 +45,8 @@ int main(int argc, char* args[]){
   		printf("Failed to initialize!\n");
   	}
 	else {
-		menuPrincipal(&Game);
-		telaLevel(&Game);
+		quit = menuPrincipal(&Game);
+		if (!quit) {telaLevel(&Game);}//Se fechar no menu, nao printa a telalevel
 
 		if(!createBlock(Blocks) || !createBall(&Ball) || !createPad(&Pad) || !createBackground(BACKGROUND_ADDRESS1) ){
 			quit=false;
@@ -67,6 +67,7 @@ int main(int argc, char* args[]){
 						switch(e.key.keysym.sym){
 							case SDLK_ESCAPE:
 								quit = menuPause();
+								if (quit){return 0;}
 								tempo_i=clock();
 								break;
 							case SDLK_q:

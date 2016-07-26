@@ -454,7 +454,7 @@ int blitBackground(void){
 	return success;
 	}
 	
-void menuPrincipal(GAMESTATS *game){
+int menuPrincipal(GAMESTATS *game){
 	SDL_Surface* fundo = NULL;
 	SDL_Surface* botao1 = NULL;
 	SDL_Surface* botao2 = NULL;
@@ -501,6 +501,7 @@ void menuPrincipal(GAMESTATS *game){
 				switch(event.type){
 					case SDL_QUIT:
 						quit = 1;
+						return 1;
 						break;
 					case SDL_KEYDOWN:
 						switch(event.key.keysym.sym){
@@ -528,6 +529,7 @@ void menuPrincipal(GAMESTATS *game){
 		SDL_UpdateWindowSurface(gWindow);
 		SDL_Delay(1000/FPS);
 		}
+	return 0;
 	}
 
 void corrige(double *stepx){
