@@ -111,7 +111,7 @@ int main(int argc, char* args[]){
 			}
 			printPlayerStats(Player,fonteScore, Game);
 			tempo_f = clock();
-			updatePlayer(&Player, &Game, &Pad);
+			quit = updatePlayer(&Player, &Game, &Pad);
 			SDL_UpdateWindowSurface(gWindow);
 			tempo_gasto = (double)(tempo_f-tempo_i)/CLOCKS_PER_SEC;
 			SDL_Delay((int)(1000/FPS - 1000*tempo_gasto)) ;

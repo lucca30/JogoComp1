@@ -610,7 +610,8 @@ void loadLevel(GAMESTATS *game){
 	game->level = fase;
 }
 
-void updatePlayer(PLAYERSTATS *Player, GAMESTATS *game, PAD *p){
+int updatePlayer(PLAYERSTATS *Player, GAMESTATS *game, PAD *p){
+	int quitGAME = 0;
 	if(Player->score%10000 != 0) {
 		Player->incremento = 1;
 	}
@@ -623,17 +624,17 @@ void updatePlayer(PLAYERSTATS *Player, GAMESTATS *game, PAD *p){
 		gameoverTela();
 		Player->lives = 3;
 		Player->score = 0;
-		menuPrincipal(game);
+		quitGAME = menuPrincipal(game);////
 		game->level = 0;
 		p->posx = SCREEN_WIDTH/2;
 		loadLevel(game);
-		return;
 	}
 	if(Player->score == game->total_level_score){
 		game->level++;
 		telaLevel(game);
 		loadLevel(game);
 	}
+	return quitGAME;
 }
 
 TTF_Font* preparaFonte(char* arquivoFonte, int size){
