@@ -480,9 +480,9 @@ void menuPrincipal(GAMESTATS *game){
 	//Rect da Imagem Principal
 	SDL_Rect dstImgPr = {0,0,800,600};
 	//Rect do botao1
-	SDL_Rect dstButt1 = {400 - 334/2,290,334,80};
+	SDL_Rect dstButt1 = {400 - 334/2,310,334,80};
 	//Rect do botao2
-	SDL_Rect dstButt2 = {400 - 334/2,390,334,80};
+	SDL_Rect dstButt2 = {400 - 334/2,410,334,80};
 	//Rect do botao2
 	SDL_Rect dstPont = {400 - 334/2 - 50,400,334,80};
 
@@ -495,7 +495,7 @@ void menuPrincipal(GAMESTATS *game){
 		if (opcaoSelecionada > 2){opcaoSelecionada = 1;}
 		if (opcaoSelecionada < 1){opcaoSelecionada = 2;}
 		
-		dstPont.y = 200 + (opcaoSelecionada*100);
+		dstPont.y = 220 + (opcaoSelecionada*100);
 		
 		while(SDL_PollEvent(&event) != 0 ){
 				switch(event.type){

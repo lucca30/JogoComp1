@@ -14,10 +14,10 @@
 #define BLOCK_HEIGHT 30
 #define BLOCK_ADDRESS1 "./img/block1.png"
 #define BLOCK_ADDRESS2 "./img/block2.png"
-#define BLOCK_ADDRESS3 "./img/bloco3.png"
+#define BLOCK_ADDRESS3 "./img/block3.png"
 
 //BACKGROUND constants
-#define BACKGROUND_ADDRESS1 "./img/teste.png"
+#define BACKGROUND_ADDRESS1 "./img/fundo.png"
 #define TELAINICIAL_ADDRESS1 "./img/telapr.png"
 #define FUNDOPAUSE_ADDRESS1 "./img/telapause.png"
 
