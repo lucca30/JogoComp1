@@ -626,7 +626,12 @@ void printPlayerStats(PLAYERSTATS player, TTF_Font* fonteScore, GAMESTATS game){
 	rectTemp.w = 0;
 	rectTemp.h = 0;
 
-	sprintf(stringTemp,"Score: %5d Vidas: %2d",player.score, player.lives);
+	sprintf(stringTemp,"Score: %5d",player.score);
+	scoreSuperficie = createSurfaceTTF(stringTemp,fonteScore,255,255,255);
+	SDL_BlitSurface(scoreSuperficie, NULL, gScreenSurface, &rectTemp);
+
+	rectTemp.x = 325;
+	sprintf(stringTemp,"Vidas: %2d", player.lives);
 	scoreSuperficie = createSurfaceTTF(stringTemp,fonteScore,255,255,255);
 	SDL_BlitSurface(scoreSuperficie, NULL, gScreenSurface, &rectTemp);
 
