@@ -88,7 +88,7 @@ void loadLevel(GAMESTATS *game);
 /*
  * 
  */
-void updatePlayer(PLAYERSTATS *Player, GAMESTATS *game);
+void updatePlayer(PLAYERSTATS *Player, GAMESTATS *game, PAD *p);
 /*
  * 
  */

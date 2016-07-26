@@ -66,6 +66,7 @@ int main(int argc, char* args[]){
 						switch(e.key.keysym.sym){
 							case SDLK_ESCAPE:
 								quit = menuPause();
+								tempo_i=clock();
 								break;
 							case SDLK_q:
 								quit = true;
@@ -103,7 +104,7 @@ int main(int argc, char* args[]){
 			}
 			printPlayerStats(Player,fonteScore);
 			tempo_f = clock();
-			updatePlayer(&Player, &Game);
+			updatePlayer(&Player, &Game, &Pad);
 			SDL_UpdateWindowSurface(gWindow);
 			tempo_gasto = (double)(tempo_f-tempo_i)/CLOCKS_PER_SEC;
 			SDL_Delay((int)(1000/FPS - 1000*tempo_gasto)) ;

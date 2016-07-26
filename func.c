@@ -390,12 +390,7 @@ double distancia(int x1, int y1, int x2, int y2){
 int menuPause(void){
 	SDL_Surface* menuTela = NULL;
 	SDL_Surface* fundo = NULL;
-	SDL_Rect destRct;
-
-	destRct.x = 0;
-	destRct.y = 0;
-	destRct.w = 800;
-	destRct.h = 600;
+	SDL_Rect destRct = {0,0,800,600};
 
 	int quit = 0;
 	int quitGAME = 0;
@@ -421,10 +416,10 @@ int menuPause(void){
 						break;
 				}
 			}
+			
 		SDL_FillRect(menuTela, NULL, SDL_MapRGB(menuTela->format, 0xFF, 0xFF, 0xFF));
 		SDL_BlitSurface(fundo, NULL, menuTela, &destRct);
 		SDL_UpdateWindowSurface(gWindow);
-		SDL_Delay(1000/FPS);
 		}
 	return quitGAME;
 	}
@@ -474,18 +469,9 @@ void menuPrincipal(GAMESTATS *game){
 	SDL_SetColorKey(botao1, SDL_TRUE, SDL_MapRGB( (botao1)->format, 0xFF, 0, 0xFF));
 
 	//Rect da Imagem Principal
-	SDL_Rect dstImgPr;
-	dstImgPr.x = 0;
-	dstImgPr.y = 0;
-	dstImgPr.w = 800;
-	dstImgPr.h = 600;
-
+	SDL_Rect dstImgPr = {0,0,800,600};
 	//Rect do botao1
-	SDL_Rect dstButt1;
-	dstButt1.x = 400 - 334/2 ;
-	dstButt1.y = 350;
-	dstButt1.w = 334;
-	dstButt1.h = 80;
+	SDL_Rect dstButt1 = {400 - 334/2,350,334,80};
 
 	int quit = 0;
 	SDL_Event event;
@@ -591,7 +577,7 @@ void loadLevel(GAMESTATS *game){
 	game->level = fase;
 }
 
-void updatePlayer(PLAYERSTATS *Player, GAMESTATS *game){
+void updatePlayer(PLAYERSTATS *Player, GAMESTATS *game, PAD *p){
 	if(Player->score%10000 != 0) {
 		Player->incremento = 1;
 	}
@@ -606,6 +592,7 @@ void updatePlayer(PLAYERSTATS *Player, GAMESTATS *game){
 		Player->score = 0;
 		menuPrincipal(game);
 		game->level = 0;
+		p->posx = SCREEN_WIDTH/2;
 		loadLevel(game);
 		return;
 	}
