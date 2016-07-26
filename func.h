@@ -86,11 +86,11 @@ int compare(PLAYERSTATS *a, PLAYERSTATS *b);
  */
 void loadLevel(GAMESTATS *game);
 /*
- * 
+ *
  */
 void updatePlayer(PLAYERSTATS *Player, GAMESTATS *game, PAD *p);
 /*
- * 
+ *
  */
 TTF_Font* preparaFonte(char* fonte, int size);
 /*
@@ -99,8 +99,12 @@ TTF_Font* preparaFonte(char* fonte, int size);
 
 SDL_Surface* createSurfaceTTF(char* texto,TTF_Font* fonte,int colorR,int colorG,int colorB);
 /*
- * Cria uma superfície baseado em uma string, um tipo de fonte, uma corRed, uma corGreen e uma corBlue. 
+ * Cria uma superfície baseado em uma string, um tipo de fonte, uma corRed, uma corGreen e uma corBlue.
  */
 void printPlayerStats(PLAYERSTATS player, TTF_Font* fonteScore);
 
 void gameoverTela();
+
+void printRanking(void);
+
+int telaRanking(void);

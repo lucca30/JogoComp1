@@ -32,7 +32,7 @@ int main(int argc, char* args[]){
 	Player.score = 0;
 	Player.lives = 3;
 	Player.incremento = 0;
-	TTF_Font* fonteScore;
+	TTF_Font *fonteScore;
 	clock_t tempo_i, tempo_f;
 	double tempo_gasto;
 	/*
@@ -55,6 +55,7 @@ int main(int argc, char* args[]){
 		fonteScore = preparaFonte("fonteScore.ttf", 35);
 
 
+
 		while(!quit){
 			tempo_i = clock();
 			while(SDL_PollEvent(&e) != 0 ){
@@ -73,6 +74,10 @@ int main(int argc, char* args[]){
 								break;
 							case SDLK_SPACE:
 								Game.moving_ball = true;
+								break;
+							case SDLK_r:
+								telaRanking();
+								tempo_i = clock();
 								break;
 						}
 						break;

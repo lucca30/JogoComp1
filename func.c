@@ -3,6 +3,7 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include <math.h>
+#include <string.h>
 #include "defs.h"
 #include "globais.h"
 #include "func.h"
@@ -416,7 +417,7 @@ int menuPause(void){
 						break;
 				}
 			}
-			
+
 		SDL_FillRect(menuTela, NULL, SDL_MapRGB(menuTela->format, 0xFF, 0xFF, 0xFF));
 		SDL_BlitSurface(fundo, NULL, menuTela, &destRct);
 		SDL_UpdateWindowSurface(gWindow);
@@ -635,14 +636,14 @@ void printPlayerStats(PLAYERSTATS player, TTF_Font* fonteScore){
 
 void gameoverTela(){
 	SDL_Surface* fundo = NULL;
-	
+
 	//Loading Surfaces
 	fundo = loadSurface(GAMEOVER_ADDRESS1);
 	if(fundo==NULL){
 		puts("Imagem da Tela Gameover não foi carregada.");
 		}
 
-	//Rect da Imagem 
+	//Rect da Imagem
 	SDL_Rect dstImg = {0, 0, 800, 600};
 	//Guarda qual opcao de botao foi acionada
 
@@ -650,4 +651,76 @@ void gameoverTela(){
 	SDL_BlitSurface(fundo, NULL, gScreenSurface, &dstImg);
 	SDL_UpdateWindowSurface(gWindow);
 	SDL_Delay(3000);
+	}
+
+void printRanking(void){
+	char stringTemp[50];
+	FILE *ranking;
+	PLAYERSTATS lidos[10];
+	int i;
+	SDL_Surface* scoreSuperficie;
+	SDL_Rect destRct;
+	TTF_Font* fonteScore = preparaFonte("fonteScore.ttf", 24);
+	TTF_Font* title = preparaFonte("fonteScore.ttf", 70);
+
+	ranking = fopen("ranking.bin", "r");
+	if(!ranking) return;
+
+	fread(lidos, sizeof(PLAYERSTATS), 10, ranking);
+
+	for(i = 0; i < 10; i++) {
+		sprintf(stringTemp,"Player: %s", lidos[i].playerName);
+		scoreSuperficie = createSurfaceTTF(stringTemp,fonteScore,255,255,255);
+		destRct.x = 175;
+		destRct.y = 50*i + 110;
+		SDL_BlitSurface(scoreSuperficie, NULL, gScreenSurface, &destRct);
+		sprintf(stringTemp,"Score: %d", lidos[i].score);
+		scoreSuperficie = createSurfaceTTF(stringTemp,fonteScore,255,255,255);
+		destRct.x = 475;
+		SDL_BlitSurface(scoreSuperficie, NULL, gScreenSurface, &destRct);
+
+	}
+	destRct.x = 250;
+	destRct.y = 10;
+	sprintf(stringTemp, "RANKING");
+	scoreSuperficie = createSurfaceTTF(stringTemp, title, 255,255,255);
+	SDL_BlitSurface(scoreSuperficie, NULL, gScreenSurface, &destRct);
+	}
+
+int telaRanking(void){
+	SDL_Surface* fundo = NULL;
+	SDL_Rect destRct;
+
+	destRct.x = 0;
+	destRct.y = 0;
+	destRct.w = 800;
+	destRct.h = 600;
+
+	int quit = 0;
+	int quitGAME = 0;
+	SDL_Event e;
+	fundo = loadSurface("./img/teste.png");
+	SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0xFF, 0xFF, 0xFF));
+	SDL_BlitSurface(fundo, NULL, gScreenSurface, &destRct);
+	printRanking();
+	SDL_UpdateWindowSurface(gWindow);
+	while(!quit){
+		while(SDL_PollEvent(&e) != 0 ){
+				switch(e.type){
+					case SDL_QUIT:
+						quitGAME = 1;
+						quit = 1;
+						break;
+					case SDL_KEYDOWN:
+						switch(e.key.keysym.sym){
+							case SDLK_ESCAPE:
+								quit = 1;
+								break;
+							}
+						break;
+				}
+			}
+		SDL_Delay(1000/FPS);
+		}
+	return quitGAME;
 	}

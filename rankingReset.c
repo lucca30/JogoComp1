@@ -4,11 +4,14 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 
+char string[5];
+int score_;
 typedef struct _PLAYERSTATS{
 	char playerName[5];
 	int score;
-	int lives;
+	int lives, incremento;
 } PLAYERSTATS;
 
 int main(void) {
@@ -17,7 +20,9 @@ int main(void) {
     PLAYERSTATS jogadores[10];
 
     for(i = 0; i < 10; i++) {
-        jogadores[i].score = 100;
+		scanf("%s %d", string, &score_ );
+		strcpy(jogadores[i].playerName,string);
+        jogadores[i].score = score_;
     }
 
     file1 = fopen("ranking.bin", "w");
