@@ -24,24 +24,26 @@
 int main(int argc, char* args[]){
 	int quit = false;
 	SDL_Event e;
+
+//Variáveis essenciais
 	BLOCK Blocks[3];
 	BALL Ball;
 	PAD Pad;
 	GAMESTATS Game;
 	PLAYERSTATS Player;
+
+//Atribuições iniciais
 	Game.level = 0;
 	Player.score = 0;
 	Player.lives = 3;
 	Player.incremento = 0;
+	trash.topo = 0;
+
+//Alguns elementos extras
 	TTF_Font *fonteScore;
 	clock_t tempo_i, tempo_f;
 	double tempo_gasto;
-	/*
-	 * Esse incremento conta quantas vidas extras serão conferidas ao jogador
-	 * a cada mil pontos.
-	 */
 
-	trash.topo = 0;
 	if(!init()){
   		printf("Failed to initialize!\n");
   	}
@@ -62,11 +64,7 @@ int main(int argc, char* args[]){
 				switch(e.type){
 					case SDL_QUIT:
 						quit = true;
-						if (quit){
-							closing();
-							return 0;
-							}//MUDAR
-						break;
+							break;
 					case SDL_KEYDOWN:
 						switch(e.key.keysym.sym){
 							case SDLK_ESCAPE:
@@ -89,6 +87,7 @@ int main(int argc, char* args[]){
 				closing();
 				return 0;
 			}
+
 			//Detecta se deve modificar a componente vetorial do PAD
 			acceleratePad(&Pad);
 			//Preenche a superfície
@@ -103,6 +102,7 @@ int main(int argc, char* args[]){
 				quit = false;
 				puts("Problemas ao imprimir a bola.\n");
 			}
+
 			//Detecta colisão
 			colisao(&Ball, &Pad, &Game, &Player);
 
@@ -116,10 +116,13 @@ int main(int argc, char* args[]){
 			}
 			//Imprime dados do jogador na tela
 			printPlayerStats(Player,fonteScore, Game);
+
 			//Detecta tempo de execução até o momento
 			tempo_f = clock();
+
 			//Atualiza informações do Player e do Jogo
 			quit = updatePlayer(&Player, &Game, &Pad);
+
 			//Atualiza a janela
 			SDL_UpdateWindowSurface(gWindow);
 			//Calcula o tempo gasto para execução

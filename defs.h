@@ -94,7 +94,7 @@ typedef struct _VETOR{
 
 typedef struct _PAD{
 	SDL_Surface* image;
-	int posx, posy;
+	int posx, posy; //Relativos ao centro do PAD
 	VETOR vetor;
 } PAD;
 
