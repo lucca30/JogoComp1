@@ -41,7 +41,7 @@ int movePad(PAD *p);
 /*
  * Move e blita o pad.
  */
-void aceleratePad(PAD *p);
+void acceleratePad(PAD *p);
 /*
  * Se teclas ESQ ou DIR forem pressionadas, move o pad.
  */
@@ -88,7 +88,7 @@ void loadLevel(GAMESTATS *game);
 /*
  *
  */
-void updatePlayer(PLAYERSTATS *Player, GAMESTATS *game, PAD *p);
+int updatePlayer(PLAYERSTATS *Player, GAMESTATS *game, PAD *p);
 /*
  *
  */
@@ -114,3 +114,7 @@ void telaLevel(GAMESTATS *game);
 void proximaFaseTela(void);
 
 void blitaNome(char nome[6], char stringTemp[6]);
+
+void logoTela(void);
+
+int playSound(Mix_Chunk *effect);
