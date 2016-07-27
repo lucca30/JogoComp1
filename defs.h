@@ -72,8 +72,12 @@
 #define SE6_ADDRESS "./music/launch.wav"
 #define SE7_ADDRESS "./music/death.wav"
 
+//TTF constant
+#define FONT_ADDRESS "./fonteScore.ttf"
+
 //Binary addresses
 #define MAP_ADDRESS "./level.bin"
+#define RANK_ADDRESS "./ranking.bin"
 
 //MACROS
 #define MOD(a)a>0?a:-a

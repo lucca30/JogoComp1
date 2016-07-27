@@ -19,7 +19,7 @@ int imprimeMapa(GAMESTATS *game, BLOCK *b){
 	srcRct.h = BLOCK_HEIGHT;
 	for(i=0;i<10;i++){
 		for(j=0;j<9;j++){
-			if((game->mapa[i][j])!=0) {
+			if((game->mapa[i][j])!=0) { //Se o BLoco não for vazio
 				destRct.x=j*BLOCK_WIDTH + BLOCK_WIDTH/2;
 				destRct.y=i*BLOCK_HEIGHT;
 				if(SDL_BlitSurface(b[game->mapa[i][j]-1].image, &srcRct, gScreenSurface, &destRct) < 0){
@@ -39,7 +39,7 @@ int createBlock(BLOCK *b){
 		success = false;
 		puts("Imagem do bloco não foi carregada.");
 	}
-	pushTrash(b[0].image);
+	pushTrash(b[0].image);//Guardando a imagem para futuro closing()
 	SDL_SetColorKey(b[0].image, SDL_TRUE, SDL_MapRGB( (b[0].image)->format, 0xFF, 0, 0xFF));
 	b[1].image = loadSurface(BLOCK_ADDRESS2);
 	if(b->image==NULL){
@@ -66,7 +66,10 @@ int createBall(BALL *b){
 		success = false;
 		puts("Imagem da bola não foi carregada.");
 	}
+	//Chroma key
 	SDL_SetColorKey(b->image, SDL_TRUE, SDL_MapRGB( (b->image)->format, 0xFF, 0, 0xFF));
+
+//Atrinbuições iniciais
 	b->posx = 400;
 	b->posy = 400;
 	b->stepx = BALL_INIT_SPEED_X;
@@ -81,14 +84,18 @@ int moveBall(BALL *b, PAD *p, GAMESTATS *game){
 	srcRct.y = 0;
 	srcRct.w = BALL_WIDTH;
 	srcRct.h = BALL_HEIGHT;
+	//Bola livre do player
 	if(game->moving_ball){
 		b->posx += b->stepx;
 		b->posy += b->stepy;
 	}
 	else{
+		//Bola presa ao PAD
 		b->posx = p->posx;
 		b->posy = p->posy - PAD_HEIGHT/2 - BALL_HEIGHT/2 + BALL_CORRECT;
 	}
+
+	//Reajuste do posicionamento para que a posição da bola seja baseada no centro
 	destRct.x = (int) b->posx - BALL_WIDTH/2;
 	destRct.y = (int) b->posy - BALL_HEIGHT/2;
 	if(SDL_BlitSurface(b->image, &srcRct, gScreenSurface, &destRct) < 0){
@@ -108,34 +115,40 @@ void colisao(BALL *b, PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 		playSound(gHit3);
 		return;
 	}
+
 	//Colisão com o topo
 	if(b->posy <= BALL_HEIGHT/2 + BLOCK_HEIGHT){
 		b->stepy = MOD(b->stepy);
 		playSound(gHit3);
 		return;
 	}
+
 	//Colisão com o fundo
 	if(b->posy >= SCREEN_HEIGHT - BALL_HEIGHT/2 ){
-		game->moving_ball = false;
+		game->moving_ball = false;//conectar a bola ao PAD
 		player->lives--;
 		playSound(gDeath);
 		return;
 	}
+	//Limites laterais da base superior do pad
 	int pad_sup_esq = p->posx - PAD_WIDTH/2 + PAD_CORRECT;
 	int pad_sup_dir = p->posx + PAD_WIDTH/2 - PAD_CORRECT;
+	//Altura da base superior do PAD
 	int pad_base_sup = p->posy - PAD_HEIGHT/2 - BALL_HEIGHT/2;
+
+	//Coeficiente para alterar a velocidade da bola
 	double f;
+
 	//Colisão com a parte superior do pad
 	if(b->posx >= pad_sup_esq &&  b->posx <= pad_sup_dir && b->posy >= pad_base_sup && b->posy <= pad_base_sup + PAD_HEIGHT/2){
 		b->stepy = -MOD(b->stepy);
 		if(b->posx > p->posx){
 			f = 1.0 + (b->posx - p->posx)/(PAD_WIDTH*3);
-			playSound(gHit2);
 		}
 		else{
 			f = 1.0 + (p->posx - b->posx)/(PAD_WIDTH*3);
-			//playSound(gHit2);
 		}
+
 		//Com a parte esquerda
 		if(b->posx >= pad_sup_esq && b->posx < p->posx && game->moving_ball){
 			b->stepx *= b->stepx<0?f:1.0/f;
@@ -151,7 +164,8 @@ void colisao(BALL *b, PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 			return;
 		}
 	}
-	//Colisão com os pontos de colisão do pad
+
+	//Colisão com os pontos de colisão do pad (são 8)
 	if(distancia(b->posx, b->posy,p->posx+PAD_COL_1E_x,p->posy+PAD_COL_1_y) <= BALL_WIDTH/2){
 		b->stepy = -MOD(b->stepy);
 		b->stepx = -MOD(b->stepx);
@@ -241,6 +255,9 @@ void colisao(BALL *b, PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 						return;
 					}
 				}
+				//Colisão com as quinas dos Blocos (são 4)
+
+				//Superior esquerda
 				if(distancia(b->posx, b->posy, j*BLOCK_WIDTH + BLOCK_WIDTH/2, i*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
 					game->mapa[i][j]--;
 					b->stepx = -MOD(b->stepx);
@@ -249,6 +266,7 @@ void colisao(BALL *b, PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 					playSound(gHit);
 					return;
 				}
+				//Superior direita
 				if(distancia(b->posx, b->posy, (j+1)*BLOCK_WIDTH + BLOCK_WIDTH/2, i*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
 					game->mapa[i][j]--;
 					b->stepx = MOD(b->stepx);
@@ -257,6 +275,7 @@ void colisao(BALL *b, PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 					playSound(gHit);
 					return;
 				}
+				//Inferior esquerda
 				if(distancia(b->posx, b->posy, j*BLOCK_WIDTH + BLOCK_WIDTH/2, (i+1)*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
 					game->mapa[i][j]--;
 					b->stepx = -MOD(b->stepx);
@@ -265,6 +284,7 @@ void colisao(BALL *b, PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 					playSound(gHit);
 					return;
 				}
+				//Inferior direita
 				if(distancia(b->posx, b->posy, (j+1)*BLOCK_WIDTH + BLOCK_WIDTH/2, (i+1)*BLOCK_HEIGHT) < BALL_WIDTH/2 - BALL_CORRECT){
 					game->mapa[i][j]--;
 					b->stepx = MOD(b->stepx);
@@ -330,22 +350,25 @@ int init(){
 }
 
 void closing(){
-		//Libera o espaço dos elementos globais
-    SDL_FreeSurface(gScreenSurface);
-    gScreenSurface = NULL;
-		int i;
-		for(i=0;i<trash.topo;i++){
-			SDL_FreeSurface(trash.image[i]);
-			trash.image[i] = NULL;
-		}
+	int i;
 
-    SDL_DestroyWindow(gWindow);
-    gWindow = NULL;
+	//Libera o espaço dos elementos globais
+  SDL_FreeSurface(gScreenSurface);
+  gScreenSurface = NULL;
 
-		//Fecha o SDL
-    IMG_Quit();
-    SDL_Quit();
-    TTF_Quit();
+	//Limpeza da lixeira
+	for(i=0;i<trash.topo;i++){
+		SDL_FreeSurface(trash.image[i]);
+		trash.image[i] = NULL;
+	}
+
+  SDL_DestroyWindow(gWindow);
+  gWindow = NULL;
+
+	//Fecha o SDL
+  IMG_Quit();
+  SDL_Quit();
+  TTF_Quit();
 	Mix_FreeChunk(gLevel);
 	Mix_CloseAudio();
 
@@ -377,7 +400,10 @@ int createPad(PAD *p){
 		success = false;
 		puts("Imagem do pad não foi carregada.");
 	}
+	//Chroma Key
 	SDL_SetColorKey(p->image, SDL_TRUE, SDL_MapRGB( (p->image)->format, 0xFF, 0, 0xFF));
+
+	//Atribuições iniciais
 	p->posx = 400;
 	p->posy = 540;
 	p->vetor.x = 0;
@@ -393,6 +419,7 @@ int movePad(PAD *p){
 	srcRct.w = PAD_WIDTH;
 	srcRct.h = PAD_HEIGHT;
 
+	//Movimentação baseada na velocidade
 	p->posx += p->vetor.x;
 	p->posy += p->vetor.y;
 	if(p->posx>=SCREEN_WIDTH - PAD_WIDTH/2 - BLOCK_WIDTH/2){
@@ -403,6 +430,8 @@ int movePad(PAD *p){
 	}
 	destRct.x = p->posx - PAD_WIDTH/2;
 	destRct.y = p->posy - PAD_HEIGHT/2;
+
+	//impressão do movimento
 	if(SDL_BlitSurface(p->image, &srcRct, gScreenSurface, &destRct) < 0){
 		printf("SDL could not blit! SDL Error: %s\n", SDL_GetError());
 		success = false;
@@ -413,16 +442,21 @@ int movePad(PAD *p){
 
 void acceleratePad(PAD *p){
 	const Uint8 *state = SDL_GetKeyboardState(NULL);
+
+	//Acelerar para direita
 	if (state[SDL_SCANCODE_RIGHT] > 0 && p->vetor.x <= Vmax){
 		p->vetor.x = p->vetor.x + 1;
 		}
 	else if (state[SDL_SCANCODE_LEFT] > 0 && p->vetor.x >= -Vmax){
+		//Acelerar para a esquerda
 		p->vetor.x = p->vetor.x - 1;
 		}
 	else{
 		if(p->vetor.x==0){
 			return;
 		}
+		//Caso não haja nenhuma aceleração, verificar se tem alguma velocidade restante
+		//se sim, diminuir até freiar
 		p->vetor.x = (p->vetor.x)>0?(p->vetor.x-0.5):(p->vetor.x+0.5);
 	}
 }
@@ -440,7 +474,6 @@ int menuPause(void){
 	SDL_Event e;
 
 	fundo = loadSurface(FUNDOPAUSE_ADDRESS1);
-	//teste se deu certo aqui
 
 	while(!quit){
 		while(SDL_PollEvent(&e) != 0 ){
@@ -547,6 +580,7 @@ int menuPrincipal(GAMESTATS *game, PLAYERSTATS *player){
 						return 1;
 						break;
 					case SDL_TEXTINPUT:
+					//Manipulação do nome inserido pelo usuário
 						if(strlen(name)<5){
 							strcat(name, event.text.text);
 							alterado = true;
@@ -563,6 +597,7 @@ int menuPrincipal(GAMESTATS *game, PLAYERSTATS *player){
 								alterado = true;
 								break;
 							case SDLK_BACKSPACE:
+								//apagar o último caracter
 								name[strlen(name)-1] = '\0';
 								alterado = true;
 								break;
@@ -582,6 +617,7 @@ int menuPrincipal(GAMESTATS *game, PLAYERSTATS *player){
 						}
 				}
 			}
+			//Só atualiza a tela em caso so usuário interagir
 			if(alterado){
 				SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0xFF, 0xFF, 0xFF));
 				SDL_BlitSurface(fundo, NULL, gScreenSurface, &dstImgPr);
@@ -642,7 +678,7 @@ void sortRank(PLAYERSTATS *player){
 	 * Aqui abre-se o arquivo binário para leitura e ordenação, colocando o
 	 * jogador atual no final do mesmo.
 	 */
-	pArq = fopen("ranking.bin", "r");
+	pArq = fopen(RANK_ADDRESS, "r");
 	if(!pArq) puts("Erro ao abrir ranking");
 	fread(lidos, sizeof(PLAYERSTATS), 10, pArq);
 	lidos[10] = *player;
@@ -662,7 +698,7 @@ void sortRank(PLAYERSTATS *player){
 	/*
 	 * Aqui os arquivos são retornados ao arquivo binário.
 	 */
-	pArq = fopen("ranking.bin", "w");
+	pArq = fopen(RANK_ADDRESS, "w");
 	if(!pArq) puts("Erro ao abrir ranking");
 	fwrite(lidos, sizeof(PLAYERSTATS), 10, pArq);
 	fclose(pArq);
@@ -785,10 +821,10 @@ void printRanking(void){
 	int i;
 	SDL_Surface* scoreSuperficie;
 	SDL_Rect destRct;
-	TTF_Font* fonteScore = preparaFonte("fonteScore.ttf", 24);
-	TTF_Font* title = preparaFonte("fonteScore.ttf", 70);
+	TTF_Font* fonteScore = preparaFonte(FONT_ADDRESS, 24);
+	TTF_Font* title = preparaFonte(FONT_ADDRESS, 70);
 
-	ranking = fopen("ranking.bin", "r");
+	ranking = fopen(RANK_ADDRESS, "r");
 	if(!ranking) return;
 
 	fread(lidos, sizeof(PLAYERSTATS), 10, ranking);
@@ -859,7 +895,7 @@ void telaLevel(GAMESTATS *game){
 	SDL_Surface *fundo, *message;
 	SDL_Rect destRct;
 	char stringTemp[50];
-	TTF_Font* font = preparaFonte("fonteScore.ttf", 100);
+	TTF_Font* font = preparaFonte(FONT_ADDRESS, 100);
 
 	destRct.x = 220;
 	destRct.y = 240;
@@ -884,7 +920,7 @@ void blitaNome(char nome[6], char stringTemp[6]){
 	SDL_Surface *message;
 	SDL_Rect destRct;
 	destRct.y = 230;
-	TTF_Font* font = preparaFonte("fonteScore.ttf", 50);
+	TTF_Font* font = preparaFonte(FONT_ADDRESS, 50);
 	for(i=0;i<6;i++){
 		if(nome[i]=='\0'){break;}
 		destRct.x = 350 + 45*i;
