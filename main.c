@@ -48,15 +48,13 @@ int main(int argc, char* args[]){
 	else {
 		logoTela();
 		quit = menuPrincipal(&Game);
-		if (!quit) {telaLevel(&Game);}//Se fechar no menu, nao printa a telalevel
+		if (!quit) {telaLevel(&Game);}//Se fechar o jogo no menu, nao printa a telaLevel
 
 		if(!createBlock(Blocks) || !createBall(&Ball) || !createPad(&Pad) || !createBackground(BACKGROUND_ADDRESS1) ){
 			quit=false;
 		}
-		//Sessão Temporária do TTF-niichan
+		//Fonte padrão do código
 		fonteScore = preparaFonte("fonteScore.ttf", 35);
-
-
 
 		while(!quit){
 			tempo_i = clock();
@@ -64,16 +62,20 @@ int main(int argc, char* args[]){
 				switch(e.type){
 					case SDL_QUIT:
 						quit = true;
+						if (quit){
+							closing();
+							return 0;
+							}//MUDAR
 						break;
 					case SDL_KEYDOWN:
 						switch(e.key.keysym.sym){
 							case SDLK_ESCAPE:
 								quit = menuPause();
-								if (quit){return 0;}
+								if (quit){
+									closing();
+									return 0;
+									}//MUDAR
 								tempo_i=clock();
-								break;
-							case SDLK_q:
-								quit = true;
 								break;
 							case SDLK_SPACE:
 								Game.moving_ball = true;
@@ -87,11 +89,12 @@ int main(int argc, char* args[]){
 						break;
 				}
 			}
-
+			//Detecta se deve modificar a componente vetorial do PAD
 			acceleratePad(&Pad);
+			//Preenche a superfície
 			SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0, 0, 0));
-
-
+			
+			//Imprime gameobjects na tela
 			if (!blitBackground()){
 				quit = false;
 				puts("Problemas ao imprimir o fundo.\n");
@@ -100,7 +103,7 @@ int main(int argc, char* args[]){
 				quit = false;
 				puts("Problemas ao imprimir a bola.\n");
 			}
-
+			//Detecta colisão
 			colisao(&Ball, &Pad, &Game, &Player);
 
 			if(!imprimeMapa(&Game, Blocks)){
@@ -111,11 +114,17 @@ int main(int argc, char* args[]){
 				quit = false;
 				puts("Problemas ao imprimir o pad.\n");
 			}
-			printPlayerStats(Player, fonteScore, Game);
+			//Imprime dados do jogador na tela
+			printPlayerStats(Player,fonteScore, Game);
+			//Detecta tempo de execução até o momento
 			tempo_f = clock();
+			//Atualiza informações do Player e do Jogo
 			quit = updatePlayer(&Player, &Game, &Pad);
+			//Atualiza a janela
 			SDL_UpdateWindowSurface(gWindow);
+			//Calcula o tempo gasto para execução
 			tempo_gasto = (double)(tempo_f-tempo_i)/CLOCKS_PER_SEC;
+			//Calcula quanto deve esperar neste frame para o jogo rodar a 60fps
 			SDL_Delay((int)(1000/FPS - 1000*tempo_gasto)) ;
 		}
 	}
