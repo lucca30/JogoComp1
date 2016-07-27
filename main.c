@@ -45,7 +45,7 @@ int main(int argc, char* args[]){
   		printf("Failed to initialize!\n");
   	}
 	else {
-		quit = menuPrincipal(&Game);
+		quit = menuPrincipal(&Game, &Player);
 		if (!quit) {telaLevel(&Game);}//Se fechar no menu, nao printa a telalevel
 
 		if(!createBlock(Blocks) || !createBall(&Ball) || !createPad(&Pad) || !createBackground(BACKGROUND_ADDRESS1) ){

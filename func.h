@@ -64,7 +64,7 @@ int blitBackground(void);
  * Imprime Background
  */
 
-int menuPrincipal(GAMESTATS *game);
+int menuPrincipal(GAMESTATS *game, PLAYERSTATS *player);
 /*
  * Menu principal
  * */
@@ -112,3 +112,5 @@ int telaRanking(void);
 void telaLevel(GAMESTATS *game);
 
 void proximaFaseTela(void);
+
+void blitaNome(char nome[6], char stringTemp[6]);

@@ -453,30 +453,30 @@ int blitBackground(void){
 
 	return success;
 	}
-	
-int menuPrincipal(GAMESTATS *game){
+
+int menuPrincipal(GAMESTATS *game, PLAYERSTATS *player){
 	SDL_Surface* fundo = NULL;
 	SDL_Surface* botao1 = NULL;
 	SDL_Surface* botao2 = NULL;
 	SDL_Surface* ponteiro = NULL;
-	
+
 	loadLevel(game);
 	//Loading Surfaces
 	fundo = loadSurface(TELAINICIAL_ADDRESS1);
 	if(fundo==NULL){puts("Imagem da Tela Pr não foi carregada.");}
 	botao1 = loadSurface(BUTTON1_ADDRESS1);
-	
+
 	if(botao1==NULL){puts("Imagem da Botao1 não foi carregada.");}
 	SDL_SetColorKey(botao1, SDL_TRUE, SDL_MapRGB( (botao1)->format, 0xFF, 0, 0xFF));
 
 	botao2 = loadSurface(BUTTON2_ADDRESS1);
 	if(botao2==NULL){puts("Imagem da Botao2 não foi carregada.");}
 	SDL_SetColorKey(botao2, SDL_TRUE, SDL_MapRGB( (botao2)->format, 0xFF, 0, 0xFF));
-	
+
 	ponteiro = loadSurface(PONTEIRO_ADDRESS1);
 	if(ponteiro==NULL){puts("Imagem da Ponteiro não foi carregada.");}
 	SDL_SetColorKey(ponteiro, SDL_TRUE, SDL_MapRGB( (ponteiro)->format, 0xFF, 0, 0xFF));
-	
+
 	//Rect da Imagem Principal
 	SDL_Rect dstImgPr = {0,0,800,600};
 	//Rect do botao1
@@ -487,47 +487,72 @@ int menuPrincipal(GAMESTATS *game){
 	SDL_Rect dstPont = {400 - 334/2 - 50,400,334,80};
 
 	int quit = 0;
+	char name[6]={""}, string[6];
 	SDL_Event event;
 	int opcaoSelecionada = 1;//Guarda qual opcao de botao foi acionada
-
+	int alterado = true;
 	while(!quit){
 		//Se apertar para baixo na ultima opcao volta para a de cima
 		if (opcaoSelecionada > 2){opcaoSelecionada = 1;}
 		if (opcaoSelecionada < 1){opcaoSelecionada = 2;}
-		
+
 		dstPont.y = 220 + (opcaoSelecionada*100);
-		
+
 		while(SDL_PollEvent(&event) != 0 ){
 				switch(event.type){
 					case SDL_QUIT:
 						quit = 1;
 						return 1;
 						break;
+					case SDL_TEXTINPUT:
+						if(strlen(name)<5){
+							strcat(name, event.text.text);
+							alterado = true;
+						}
+						break;
 					case SDL_KEYDOWN:
 						switch(event.key.keysym.sym){
 							case SDLK_DOWN:
 								opcaoSelecionada++;
+								alterado = true;
 								break;
 							case SDLK_UP:
 								opcaoSelecionada--;
+								alterado = true;
+								break;
+							case SDLK_BACKSPACE:
+								name[strlen(name)-1] = '\0';
+								alterado = true;
 								break;
 							case SDLK_SPACE:
 								if (opcaoSelecionada == 1){
+									alterado = true;
+									strcpy(player->playerName, name);
 									quit = 1;
-									}
+								}
 								if (opcaoSelecionada == 2){
 									quit = telaRanking();
-									}
+									alterado = true;
+								}
 						}
 				}
 			}
-		SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0xFF, 0xFF, 0xFF));
-		SDL_BlitSurface(fundo, NULL, gScreenSurface, &dstImgPr);
-		SDL_BlitSurface(botao1, NULL, gScreenSurface, &dstButt1);
-		SDL_BlitSurface(botao2, NULL, gScreenSurface, &dstButt2);
-		SDL_BlitSurface(ponteiro, NULL, gScreenSurface, &dstPont);
-		SDL_UpdateWindowSurface(gWindow);
-		SDL_Delay(1000/FPS);
+			if(alterado){
+				SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0xFF, 0xFF, 0xFF));
+				SDL_BlitSurface(fundo, NULL, gScreenSurface, &dstImgPr);
+				SDL_BlitSurface(botao1, NULL, gScreenSurface, &dstButt1);
+				SDL_BlitSurface(botao2, NULL, gScreenSurface, &dstButt2);
+				SDL_BlitSurface(ponteiro, NULL, gScreenSurface, &dstPont);
+				blitaNome(name, string);
+				SDL_UpdateWindowSurface(gWindow);
+				if(alterado==2){
+					alterado = false;
+				}
+				else{
+					alterado++;
+				}
+			}
+			SDL_Delay(1000/FPS);
 		}
 	return 0;
 	}
@@ -623,7 +648,7 @@ void updatePlayer(PLAYERSTATS *Player, GAMESTATS *game, PAD *p){
 		gameoverTela();
 		Player->lives = 3;
 		Player->score = 0;
-		menuPrincipal(game);
+		menuPrincipal(game, Player);
 		game->level = 0;
 		p->posx = SCREEN_WIDTH/2;
 		loadLevel(game);
@@ -786,3 +811,18 @@ void telaLevel(GAMESTATS *game){
 	SDL_UpdateWindowSurface(gWindow);
 	SDL_Delay(1000);
 	}
+
+void blitaNome(char nome[6], char stringTemp[6]){
+	int i;
+	SDL_Surface *message;
+	SDL_Rect destRct;
+	destRct.y = 230;
+	TTF_Font* font = preparaFonte("fonteScore.ttf", 50);
+	for(i=0;i<6;i++){
+		if(nome[i]=='\0'){break;}
+		destRct.x = 350 + 45*i;
+		sprintf(stringTemp, "%c", nome[i]);
+		message = createSurfaceTTF(stringTemp,font,0,0,0);
+		SDL_BlitSurface(message, NULL, gScreenSurface, &destRct);
+	}
+}
