@@ -432,14 +432,12 @@ double distancia(int x1, int y1, int x2, int y2){
 }
 
 int menuPause(void){
-	SDL_Surface* menuTela = NULL;
 	SDL_Surface* fundo = NULL;
 	SDL_Rect destRct = {0,0,800,600};
 
 	int quit = 0;
 	int quitGAME = 0;
 	SDL_Event e;
-	menuTela = SDL_GetWindowSurface( gWindow );
 
 	fundo = loadSurface(FUNDOPAUSE_ADDRESS1);
 	//teste se deu certo aqui
@@ -461,10 +459,11 @@ int menuPause(void){
 				}
 			}
 
-		SDL_FillRect(menuTela, NULL, SDL_MapRGB(menuTela->format, 0xFF, 0xFF, 0xFF));
-		SDL_BlitSurface(fundo, NULL, menuTela, &destRct);
+		SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0xFF, 0xFF, 0xFF));
+		SDL_BlitSurface(fundo, NULL, gScreenSurface, &destRct);
 		SDL_UpdateWindowSurface(gWindow);
 		}
+	SDL_FreeSurface(fundo);
 	return quitGAME;
 	}
 
@@ -597,6 +596,11 @@ int menuPrincipal(GAMESTATS *game, PLAYERSTATS *player){
 			}
 			SDL_Delay(1000/FPS);
 		}
+		SDL_FreeSurface(fundo);
+		SDL_FreeSurface(botao1);
+		SDL_FreeSurface(botao2);
+		SDL_FreeSurface(ponteiro);
+
 	return 0;
 	}
 
@@ -734,19 +738,22 @@ void printPlayerStats(PLAYERSTATS player, TTF_Font* fonteScore, GAMESTATS game){
 	scoreSuperficie = createSurfaceTTF(stringTemp,fonteScore,255,255,255);
 	SDL_BlitSurface(scoreSuperficie, NULL, gScreenSurface, &rectTemp);
 
+	SDL_FreeSurface(scoreSuperficie);
+
 	rectTemp.x = 325;
 	sprintf(stringTemp,"Vidas: %2d", player.lives);
 	scoreSuperficie = createSurfaceTTF(stringTemp,fonteScore,255,255,255);
 	SDL_BlitSurface(scoreSuperficie, NULL, gScreenSurface, &rectTemp);
+
+	SDL_FreeSurface(scoreSuperficie);
 
 	rectTemp.x = 620;
 	sprintf(stringTemp,"Level:%d", game.level+1);
 	scoreSuperficie = createSurfaceTTF(stringTemp,fonteScore,255,255,255);
 	SDL_BlitSurface(scoreSuperficie, NULL, gScreenSurface, &rectTemp);
 
-
-
-	}
+	SDL_FreeSurface(scoreSuperficie);
+}
 
 void gameoverTela(void){
 	SDL_Surface* fundo = NULL;
@@ -755,7 +762,7 @@ void gameoverTela(void){
 	fundo = loadSurface(GAMEOVER_ADDRESS1);
 	if(fundo==NULL){
 		puts("Imagem da Tela Gameover não foi carregada.");
-		}
+	}
 
 	//Rect da Imagem
 	SDL_Rect dstImg = {0, 0, 800, 600};
@@ -764,8 +771,10 @@ void gameoverTela(void){
 	SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0xFF, 0xFF, 0xFF));
 	SDL_BlitSurface(fundo, NULL, gScreenSurface, &dstImg);
 	SDL_UpdateWindowSurface(gWindow);
+	SDL_FreeSurface(fundo);
 	SDL_Delay(3000);
-	}
+
+}
 
 void printRanking(void){
 	char stringTemp[50];
@@ -788,10 +797,13 @@ void printRanking(void){
 		destRct.x = 175;
 		destRct.y = 50*i + 110;
 		SDL_BlitSurface(scoreSuperficie, NULL, gScreenSurface, &destRct);
+		SDL_FreeSurface(scoreSuperficie);
+
 		sprintf(stringTemp,"Score: %d", lidos[i].score);
 		scoreSuperficie = createSurfaceTTF(stringTemp,fonteScore,255,255,255);
 		destRct.x = 475;
 		SDL_BlitSurface(scoreSuperficie, NULL, gScreenSurface, &destRct);
+		SDL_FreeSurface(scoreSuperficie);
 
 	}
 	destRct.x = 250;
@@ -799,7 +811,8 @@ void printRanking(void){
 	sprintf(stringTemp, "RANKING");
 	scoreSuperficie = createSurfaceTTF(stringTemp, title, 255,255,255);
 	SDL_BlitSurface(scoreSuperficie, NULL, gScreenSurface, &destRct);
-	}
+	SDL_FreeSurface(scoreSuperficie);
+}
 
 int telaRanking(void){
 	SDL_Surface* fundo = NULL;
@@ -836,8 +849,9 @@ int telaRanking(void){
 			}
 		SDL_Delay(1000/FPS);
 		}
+	SDL_FreeSurface(fundo);
 	return quitGAME;
-	}
+}
 
 void telaLevel(GAMESTATS *game){
 	SDL_Surface *fundo, *message;
@@ -855,6 +869,10 @@ void telaLevel(GAMESTATS *game){
 	message = createSurfaceTTF(stringTemp,font,255,255,255);
 	SDL_BlitSurface(message, NULL, gScreenSurface, &destRct);
 	SDL_UpdateWindowSurface(gWindow);
+
+	SDL_FreeSurface(fundo);
+	SDL_FreeSurface(message);
+
 	SDL_Delay(1000);
 	}
 
@@ -871,6 +889,7 @@ void blitaNome(char nome[6], char stringTemp[6]){
 		sprintf(stringTemp, "%c", nome[i]);
 		message = createSurfaceTTF(stringTemp,font,0,0,0);
 		SDL_BlitSurface(message, NULL, gScreenSurface, &destRct);
+		SDL_FreeSurface(message);
 	}
 }
 
@@ -890,6 +909,9 @@ void logoTela(void){
 	SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0xFF, 0xFF, 0xFF));
 	SDL_BlitSurface(fundo, NULL, gScreenSurface, &dstImg);
 	SDL_UpdateWindowSurface(gWindow);
+
+	SDL_FreeSurface(fundo);
+
 	SDL_Delay(3000);
 	}
 
