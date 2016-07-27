@@ -76,8 +76,8 @@
 #define FONT_ADDRESS "./fonteScore.ttf"
 
 //Binary addresses
-#define MAP_ADDRESS "./level.bin"
-#define RANK_ADDRESS "./ranking.bin"
+#define MAP_ADDRESS "./bin/level.bin"
+#define RANK_ADDRESS "./bin/ranking.bin"
 
 //MACROS
 #define MOD(a)a>0?a:-a

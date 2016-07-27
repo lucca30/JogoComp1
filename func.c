@@ -143,10 +143,10 @@ void colisao(BALL *b, PAD *p, GAMESTATS *game, PLAYERSTATS *player){
 	if(b->posx >= pad_sup_esq &&  b->posx <= pad_sup_dir && b->posy >= pad_base_sup && b->posy <= pad_base_sup + PAD_HEIGHT/2){
 		b->stepy = -MOD(b->stepy);
 		if(b->posx > p->posx){
-			f = 1.0 + (b->posx - p->posx)/(PAD_WIDTH*3);
+			f = 1.0 + (b->posx - p->posx)/(PAD_WIDTH*2);
 		}
 		else{
-			f = 1.0 + (p->posx - b->posx)/(PAD_WIDTH*3);
+			f = 1.0 + (p->posx - b->posx)/(PAD_WIDTH*2);
 		}
 
 		//Com a parte esquerda
