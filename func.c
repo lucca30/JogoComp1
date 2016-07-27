@@ -574,6 +574,9 @@ int menuPrincipal(GAMESTATS *game, PLAYERSTATS *player){
 								}
 								if (opcaoSelecionada == 2){
 									quit = telaRanking();
+									if(quit){
+										return quit;
+									}
 									alterado = true;
 								}
 						}
@@ -697,7 +700,6 @@ int updatePlayer(PLAYERSTATS *Player, GAMESTATS *game, PAD *p){
 		gameoverTela();
 		Player->lives = 3;
 		Player->score = 0;
-		menuPrincipal(game, Player);
 		quitGAME = menuPrincipal(game,Player);
 		game->level = 0;
 		p->posx = SCREEN_WIDTH/2;

@@ -71,10 +71,6 @@ int main(int argc, char* args[]){
 						switch(e.key.keysym.sym){
 							case SDLK_ESCAPE:
 								quit = menuPause();
-								if (quit){
-									closing();
-									return 0;
-									}//MUDAR
 								tempo_i=clock();
 								break;
 							case SDLK_SPACE:
@@ -82,12 +78,16 @@ int main(int argc, char* args[]){
 								playSound(gLaunch);
 								break;
 							case SDLK_r:
-								telaRanking();
+								quit = telaRanking();
 								tempo_i = clock();
 								break;
 						}
 						break;
 				}
+			}
+			if (quit){
+				closing();
+				return 0;
 			}
 			//Detecta se deve modificar a componente vetorial do PAD
 			acceleratePad(&Pad);
