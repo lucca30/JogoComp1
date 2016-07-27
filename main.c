@@ -47,7 +47,7 @@ int main(int argc, char* args[]){
   	}
 	else {
 		logoTela();
-		quit = menuPrincipal(&Game);
+		quit = menuPrincipal(&Game, &Player);
 		if (!quit) {telaLevel(&Game);}//Se fechar o jogo no menu, nao printa a telaLevel
 
 		if(!createBlock(Blocks) || !createBall(&Ball) || !createPad(&Pad) || !createBackground(BACKGROUND_ADDRESS1) ){
@@ -93,7 +93,7 @@ int main(int argc, char* args[]){
 			acceleratePad(&Pad);
 			//Preenche a superfície
 			SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0, 0, 0));
-			
+
 			//Imprime gameobjects na tela
 			if (!blitBackground()){
 				quit = false;

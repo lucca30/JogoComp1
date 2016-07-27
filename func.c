@@ -693,11 +693,8 @@ int updatePlayer(PLAYERSTATS *Player, GAMESTATS *game, PAD *p){
 		gameoverTela();
 		Player->lives = 3;
 		Player->score = 0;
-<<<<<<<
 		menuPrincipal(game, Player);
-=======
-		quitGAME = menuPrincipal(game);////
->>>>>>>
+		quitGAME = menuPrincipal(game,Player);
 		game->level = 0;
 		p->posx = SCREEN_WIDTH/2;
 		loadLevel(game);
@@ -861,7 +858,7 @@ void telaLevel(GAMESTATS *game){
 	SDL_Delay(1000);
 	}
 
-<<<<<<<
+
 void blitaNome(char nome[6], char stringTemp[6]){
 	int i;
 	SDL_Surface *message;
@@ -877,7 +874,7 @@ void blitaNome(char nome[6], char stringTemp[6]){
 	}
 }
 
-=======
+
 void logoTela(void){
 	SDL_Surface* fundo = NULL;
 
@@ -903,5 +900,3 @@ int playSound(Mix_Chunk *effect){
 
 	return 0;
 	}
-
->>>>>>>
