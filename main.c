@@ -56,7 +56,7 @@ int main(int argc, char* args[]){
 			quit=false;
 		}
 		//Fonte padrão do código
-		fonteScore = preparaFonte("fonteScore.ttf", 35);
+		fonteScore = preparaFonte(FONT_ADDRESS, 35);
 
 		while(!quit){
 			tempo_i = clock();

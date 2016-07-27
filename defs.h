@@ -73,7 +73,7 @@
 #define SE7_ADDRESS "./music/death.wav"
 
 //TTF constant
-#define FONT_ADDRESS "./fonteScore.ttf"
+#define FONT_ADDRESS "./ttf/fonteScore.ttf"
 
 //Binary addresses
 #define MAP_ADDRESS "./bin/level.bin"
